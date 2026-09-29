@@ -1,0 +1,15 @@
+{
+  "backdrops": {
+    "winter": { "desk": "winter_desk_s37", "mob": "winter_mob_s67" },
+    "spring": { "desk": "spring2_desk_s37", "mob": "spring2_mob_s67" },
+    "summer": { "desk": "summer_desk_s41", "mob": "summer_mob_s71" },
+    "fall":   { "desk": "fall_desk_s41",   "mob": "fall_mob_s67" }
+  },
+  "sprites": {
+    "fall": ["fall_maple_red_s101", "fall_maple_orange_s101", "fall_maple_crimson_s101", "fall_birch_gold_s101",
+             "fall_oak_brown_s101", "fall_ginkgo_yellow_s101", "fall_maple_red_s202", "fall_maple_orange_s202"],
+    "spring": ["spring_petal_pink_s101", "spring_petal_pink_s202", "spring_petal_white_s101", "spring_petal_white_s202",
+               "spring_blossom_pink_s101", "spring_lilac_floret_s202", "spring_leaf_green_s202"],
+    "winter": ["winter_flake_a_s303", "winter_flake_b_s404", "winter_flake_c_s303", "winter_flake_c_s404"]
+  }
+}

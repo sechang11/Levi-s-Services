@@ -14,6 +14,30 @@ let seq = 0;
 
 export const currentSeason = () => (SEASONS[root.dataset.season] ? root.dataset.season : 'fall');
 
+/* Seasonal hero backdrop (rendered on the GPU box — see tools/assets).
+   Portrait screens get the vertical crop; AVIF with a WebP fallback, two widths each. */
+function backdropHTML(key) {
+  const b = `assets/seasons/${key}`;
+  const set = (kind, ext, [w1, w2]) => `${b}-${kind}-${w1}.${ext} ${w1}w, ${b}-${kind}-${w2}.${ext} ${w2}w`;
+  return `
+    <source type="image/avif" media="(orientation: portrait)" srcset="${set('mobile', 'avif', [720, 1088])}" sizes="100vw">
+    <source type="image/webp" media="(orientation: portrait)" srcset="${set('mobile', 'webp', [720, 1088])}" sizes="100vw">
+    <source type="image/avif" srcset="${set('desktop', 'avif', [1280, 1920])}" sizes="100vw">
+    <img src="${b}-desktop-1920.webp" srcset="${set('desktop', 'webp', [1280, 1920])}" sizes="100vw" alt="" decoding="async">`;
+}
+
+function setBackdrop(key) {
+  const pic = document.querySelector('.hero__photo');
+  if (!pic || pic.dataset.season === key) return;
+  pic.dataset.season = key;
+  pic.classList.remove('is-loaded');
+  pic.innerHTML = backdropHTML(key);
+  const img = pic.querySelector('img');
+  const shown = () => { if (pic.dataset.season === key) pic.classList.add('is-loaded'); };
+  if (img.complete && img.naturalWidth) shown();
+  else img.addEventListener('load', shown, { once: true });
+}
+
 function moveThumb() {
   const on = buttons.find((b) => b.getAttribute('aria-checked') === 'true');
   if (!thumb || !on) return;
@@ -36,6 +60,7 @@ function paint(key) {
   setText('[data-season-cta]', s.cta);
   setText('[data-season-label]', s.label);
   document.querySelectorAll('[data-season-icon]').forEach((u) => u.setAttribute('href', `#i-${key}`));
+  setBackdrop(key);
   featureService(s.featured, { open: true });
   setFxSeason(key);
   const bg = getComputedStyle(root).getPropertyValue('--bg').trim();

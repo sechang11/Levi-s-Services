@@ -1,0 +1,14 @@
+{
+  "name": "Levi Builds",
+  "short_name": "Levi Builds",
+  "description": "Local contractor — renovations, repairs, new builds and Clear Path snow removal.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0A0F1D",
+  "theme_color": "#150E0C",
+  "icons": [
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

@@ -17,6 +17,29 @@ let sprites = [];
 let raf = 0;
 let last = 0;
 
+/* Real leaf / petal / snow-crystal sprites (rendered on the GPU box — see
+   tools/assets). One small sheet per season, loaded on demand; until it
+   arrives the vector shapes below are drawn instead. */
+const SHEETS = {
+  fall: { src: 'assets/seasons/fall-sprites.webp', count: 8, cell: 112 },
+  spring: { src: 'assets/seasons/spring-sprites.webp', count: 7, cell: 80 },
+  winter: { src: 'assets/seasons/winter-sprites.webp', count: 4, cell: 72 },
+};
+const sheets = {};
+function sheetFor(key) {
+  const cfg = SHEETS[key];
+  if (!cfg) return null;
+  if (!sheets[key]) {
+    const img = new Image();
+    img.decoding = 'async';
+    const s = { img, ready: false, ...cfg };
+    img.onload = () => { s.ready = true; };
+    img.src = cfg.src;
+    sheets[key] = s;
+  }
+  return sheets[key];
+}
+
 const rand = (a, b) => a + Math.random() * (b - a);
 const pick = (arr) => arr[(Math.random() * arr.length) | 0];
 const rgba = (hex, a) => {
@@ -55,11 +78,17 @@ function spawn(p = {}, initial = false) {
     p.sway = 5 + depth * 16;
     p.freq = rand(0.12, 0.35);
     p.a = 0.3 + depth * 0.6;
+    p.crystal = depth > 0.84; // the nearest flakes show real ice-crystal detail
+    if (p.crystal) {
+      p.si = (Math.random() * SHEETS.winter.count) | 0;
+      p.rot = rand(0, TAU); p.vr = rand(-0.6, 0.6); p.flip = 0; p.vf = 0;
+    }
   } else if (season === 'spring') {
     p.r = rand(4, 8.5); p.vy = rand(16, 36); p.vx = rand(10, 26);
     p.sway = rand(10, 26); p.freq = rand(0.15, 0.4);
     p.rot = rand(0, TAU); p.vr = rand(-1.4, 1.4); p.flip = rand(0, TAU); p.vf = rand(1.2, 2.6);
     p.a = rand(0.55, 0.9);
+    p.si = (Math.random() * SHEETS.spring.count) | 0;
   } else if (season === 'summer') {
     p.r = rand(5, 11);
     p.y = initial ? rand(H * 0.12, H) : H + rand(10, 40);
@@ -72,6 +101,7 @@ function spawn(p = {}, initial = false) {
     p.sway = rand(18, 50); p.freq = rand(0.12, 0.3);
     p.rot = rand(0, TAU); p.vr = rand(-1.8, 1.8); p.flip = rand(0, TAU); p.vf = rand(1, 2.4);
     p.a = rand(0.6, 0.92);
+    p.si = (Math.random() * SHEETS.fall.count) | 0;
   }
   p.x0 = p.x;
   return p;
@@ -88,8 +118,24 @@ function update(p, dt) {
   else if (p.x > W + 80) p.x0 -= W + 160;
 }
 
+function drawSprite(sh, p, size, flipX) {
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  ctx.rotate(p.rot);
+  const f = 0.3 + 0.7 * Math.abs(Math.cos(p.flip)); // tumbling: squash along one axis
+  if (flipX) ctx.scale(f, 1); else ctx.scale(1, f);
+  ctx.drawImage(sh.img, p.si * sh.cell, 0, sh.cell, sh.cell, -size / 2, -size / 2, size, size);
+  ctx.restore();
+}
+
 function draw(p) {
+  const sh = sheets[season];
   if (season === 'winter') {
+    if (p.crystal && sh?.ready) {
+      ctx.globalAlpha = p.a * 0.95;
+      drawSprite(sh, p, p.r * 5.4, false);
+      return;
+    }
     ctx.globalAlpha = p.a;
     ctx.fillStyle = p.c;
     ctx.beginPath();
@@ -102,6 +148,11 @@ function draw(p) {
     ctx.globalAlpha = p.a * (0.2 + 0.8 * tw * tw);
     const s = p.r * 2;
     ctx.drawImage(p.sprite, p.x - s / 2, p.y - s / 2, s, s);
+    return;
+  }
+  if (sh?.ready) { // real leaves (tumble side-to-side) / petals (flutter top-to-bottom)
+    ctx.globalAlpha = p.a;
+    drawSprite(sh, p, p.r * (season === 'fall' ? 2.7 : 2.5), season === 'fall');
     return;
   }
   ctx.save();
@@ -172,6 +223,7 @@ function seed() {
 export function setFxSeason(key) {
   season = key;
   if (!ctx) return;
+  if (!reduceMotion()) sheetFor(key); // only fetch sprites when they'll actually be drawn
   readColors();
   seed();
   if (reduceMotion()) { stop(); clear(); return; }

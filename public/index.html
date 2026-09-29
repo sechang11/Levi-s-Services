@@ -8,12 +8,21 @@
   <meta name="theme-color" content="#150E0C" />
   <meta name="color-scheme" content="dark" />
 
+  <!-- {{ORIGIN}} is replaced with the live site origin by server.js (share cards need absolute URLs) -->
+  <link rel="canonical" href="{{ORIGIN}}/" />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ORIGIN}}/" />
   <meta property="og:title" content="Levi Builds — Local Contractor &amp; Clear Path Snow Removal" />
   <meta property="og:description" content="Renovations, repairs, new builds — and driveways & walkways cleared all winter." />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="{{ORIGIN}}/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Levi Builds — four seasons of work: spring, summer, fall and winter" />
+  <meta name="twitter:card" content="summary_large_image" />
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
 
   <!-- applies the seasonal theme before first paint (no flash) -->
   <script src="js/boot.js"></script>
@@ -30,6 +39,8 @@
     "@context": "https://schema.org",
     "@type": "HomeAndConstructionBusiness",
     "name": "Levi Builds",
+    "url": "{{ORIGIN}}/",
+    "image": "{{ORIGIN}}/og-image.jpg",
     "description": "Local contractor — renovations, repairs, new builds and Clear Path snow removal for driveways and walkways.",
     "telephone": "+1-555-555-0142",
     "email": "levi@example.com",
@@ -108,6 +119,8 @@
 
   <!-- ===================== HERO ===================== -->
   <section class="hero" id="top" aria-label="Introduction">
+    <!-- seasonal backdrop photo; seasons.js fills in the right season's sources -->
+    <picture class="hero__photo" aria-hidden="true"></picture>
     <div class="hero__light" aria-hidden="true"></div>
     <div class="hero__ink" aria-hidden="true"></div>
     <div class="hero__sun" aria-hidden="true"></div>

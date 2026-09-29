@@ -75,6 +75,11 @@ main:focus{ outline:none; }
   position:fixed; inset:0; z-index:-2; pointer-events:none;
   background:radial-gradient(120% 90% at 50% -10%, var(--bg-glow) 0%, var(--void) 62%);
 }
+.concrete::before{  /* the season's photo as a small pre-blurred color field tinting the whole page */
+  content:""; position:absolute; inset:0;
+  background:var(--atmos, none) center / cover no-repeat;
+  opacity:.55;
+}
 .concrete::after{   /* fine concrete grit (base64 SVG = cross-browser safe) */
   content:""; position:absolute; inset:0; opacity:.06; mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJjIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44NSIgbnVtT2N0YXZlcz0iMiIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNjKSIvPjwvc3ZnPg==");
@@ -177,11 +182,39 @@ body::after{    /* cinematic vignette — above content, click-through */
 .hero__ink{   /* hero-local etch: above the seam, below the copy */
   position:absolute; inset:0; z-index:0; pointer-events:none;
   background-image:var(--ink-art); background-size:340px 340px; background-repeat:repeat;
-  mix-blend-mode:multiply; opacity:.3;
+  mix-blend-mode:multiply; opacity:.2;   /* lighter over the seasonal photo so it can breathe */
   -webkit-mask-image:radial-gradient(120% 100% at 50% 32%, #000 55%, transparent 92%);
           mask-image:radial-gradient(120% 100% at 50% 32%, #000 55%, transparent 92%);
 }
 .hero__sun{ display:none; }
+
+/* seasonal backdrop photo (AVIF/WebP from seasons.js) under a legibility scrim */
+.hero__photo{
+  position:absolute; inset:0; z-index:-2; display:block; overflow:hidden; pointer-events:none;
+  opacity:0; transition:opacity 1.4s ease;
+}
+.hero__photo.is-loaded{ opacity:var(--photo-opacity, .62); }
+.hero__photo img{
+  display:block; width:100%; height:100%;
+  object-fit:cover; object-position:var(--photo-pos, 50% 72%);
+  transform:scale(1.04); transform-origin:50% 60%;
+}
+.hero__photo::after{
+  content:""; position:absolute; inset:0;
+  background:
+    radial-gradient(62% 52% at 50% 44%, color-mix(in oklab, var(--void) 58%, transparent), transparent 80%),
+    linear-gradient(180deg,
+      color-mix(in oklab, var(--void) 82%, transparent) 0%,
+      color-mix(in oklab, var(--void) 18%, transparent) 26%,
+      color-mix(in oklab, var(--void) 30%, transparent) 62%,
+      color-mix(in oklab, var(--void) 92%, transparent) 100%);
+}
+@media (prefers-reduced-motion:no-preference){ .hero__photo img{ animation:photo-drift 44s ease-in-out infinite alternate; } }
+html[data-motion="full"] .hero__photo img{ animation:photo-drift 44s ease-in-out infinite alternate; }
+@keyframes photo-drift{
+  from{ transform:scale(1.04) translate3d(0,0,0); }
+  to{ transform:scale(1.11) translate3d(-1.2%,-1.4%,0); }
+}
 .hero-ground{ display:none; position:absolute; left:0; right:0; bottom:4px; width:100%; height:56px; z-index:0; pointer-events:none; }
 .eyebrow,.head-stage,.head-hint,.hero__headline,.season-chip,.hero__tagline,.hero__actions,.trust{ position:relative; z-index:1; }
 .eyebrow{ margin:0; font-size:12px; color:var(--muted); }
@@ -921,7 +954,7 @@ html[data-motion="full"] .hero__ink{ animation:ink-drift 80s linear infinite; }
 @media print{
   html,html[data-season]{ --text:#111; --muted:#444; background:#fff; }
   body{ background:#fff; color:#111; }
-  body::before,body::after,.concrete,.season-fx,.hero__light,.hero__ink,.hero__sun,.hero-ground,
+  body::before,body::after,.concrete,.season-fx,.hero__photo,.hero__light,.hero__ink,.hero__sun,.hero-ground,
   .topbar .season-switch,.tabbar,.head-stage,.head-hint,.season-chip,.cta,.lightbox,.thumb::before,.svc__toggle{ display:none !important; }
   .hero__headline,.svc-title{ -webkit-text-fill-color:#111 !important; color:#111 !important; background:none !important; filter:none !important; }
   .svc-title::before{ display:none !important; }

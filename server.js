@@ -13,6 +13,7 @@
  * Railway injects PORT; locally it defaults to 5173.
  */
 const http = require('node:http');
+const crypto = require('node:crypto');
 const fsp = require('node:fs/promises');
 const path = require('node:path');
 const zlib = require('node:zlib');
@@ -20,6 +21,8 @@ const zlib = require('node:zlib');
 const ROOT = path.join(__dirname, 'public');
 const PORT = Number(process.env.PORT) || 5173;
 const WEBHOOK_URL = (process.env.QUOTE_WEBHOOK_URL || '').trim();
+// Optional: the public URL (e.g. https://levibuilds.com). Otherwise derived per request.
+const SITE_URL = (process.env.SITE_URL || '').trim().replace(/\/+$/, '');
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -78,13 +81,48 @@ async function getFile(abs) {
 
   const raw = await fsp.readFile(abs);
   const ext = path.extname(abs).toLowerCase();
-  const entry = { key, ext, type: TYPES[ext] || 'application/octet-stream', raw, br: null, gz: null, etag: `W/"${key}"` };
-  if (COMPRESSIBLE.has(ext) && raw.length > 600) {
-    entry.br = zlib.brotliCompressSync(raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 10 } });
-    entry.gz = zlib.gzipSync(raw, { level: 9 });
-  }
+  const entry = compress({ key, ext, type: TYPES[ext] || 'application/octet-stream', raw, br: null, gz: null, etag: `W/"${key}"` });
+  entry.templated = ext === '.html' && raw.includes('{{ORIGIN}}');
   cache.set(abs, entry);
   return entry;
+}
+
+function compress(entry) {
+  if (COMPRESSIBLE.has(entry.ext) && entry.raw.length > 600) {
+    entry.br = zlib.brotliCompressSync(entry.raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 10 } });
+    entry.gz = zlib.gzipSync(entry.raw, { level: 9 });
+  }
+  return entry;
+}
+
+/* Share cards (og:image), canonical and JSON-LD need absolute URLs, but the
+   domain isn't known until deploy — so HTML carries {{ORIGIN}} and we fill it
+   in here, from SITE_URL or the (validated) forwarded host/proto headers. */
+function originOf(req) {
+  if (SITE_URL) return SITE_URL;
+  const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase();
+  if (!/^[a-z0-9.-]+(:\d{1,5})?$/.test(host)) return '';
+  const fwd = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase();
+  return `${fwd === 'https' || fwd === 'http' ? fwd : 'http'}://${host}`;
+}
+
+const variants = new Map(); // `${etag}|${origin}` → entry with {{ORIGIN}} filled in
+function withOrigin(file, origin) {
+  const k = `${file.etag}|${origin}`;
+  let v = variants.get(k);
+  if (!v) {
+    const tag = crypto.createHash('sha1').update(origin).digest('hex').slice(0, 8);
+    v = compress({
+      ...file,
+      raw: Buffer.from(file.raw.toString('utf8').replaceAll('{{ORIGIN}}', origin)),
+      etag: `W/"${file.key}-${tag}"`,
+      br: null,
+      gz: null,
+    });
+    if (variants.size > 64) variants.clear();
+    variants.set(k, v);
+  }
+  return v;
 }
 
 function resolvePath(pathname) {
@@ -287,7 +325,7 @@ const server = http.createServer(async (req, res) => {
     const abs = resolvePath(pathname);
     const file = abs ? await getFile(abs) : null;
     if (!file) return await sendNotFound(req, res);
-    return sendFile(req, res, file);
+    return sendFile(req, res, file.templated ? withOrigin(file, originOf(req)) : file);
   } catch (err) {
     console.error('[server] error:', err);
     if (!res.headersSent) sendText(res, 500, 'Internal Server Error');

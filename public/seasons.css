@@ -75,6 +75,14 @@
 }
 
 /* =====================================================================
+   Seasonal backdrop photo + page tint (rendered on the GPU box, see tools/assets)
+   ===================================================================== */
+[data-season="winter"]{ --atmos:url("assets/seasons/winter-atmos.webp"); --photo-opacity:.7;  --photo-pos:50% 80%; }
+[data-season="spring"]{ --atmos:url("assets/seasons/spring-atmos.webp"); --photo-opacity:.72; --photo-pos:50% 76%; }
+[data-season="summer"]{ --atmos:url("assets/seasons/summer-atmos.webp"); --photo-opacity:.62; --photo-pos:50% 70%; }
+[data-season="fall"]  { --atmos:url("assets/seasons/fall-atmos.webp");   --photo-opacity:.7;  --photo-pos:50% 74%; }
+
+/* =====================================================================
    Levi dresses for the season
    ===================================================================== */
 [data-season="winter"] .outfit--winter,

@@ -42,6 +42,7 @@ Two URL options are useful for previewing:
 2. Railway detects Node from `package.json`. `railway.json` sets the start command (`node server.js`), a health check at `/healthz`, and restart-on-failure.
 3. Go to **Settings → Networking → Generate Domain** to get a public URL. You can add a custom domain in the same place.
 4. *(Optional)* Go to **Variables** and add `QUOTE_WEBHOOK_URL`; see the next section.
+5. *(Optional)* Once you have a custom domain, add `SITE_URL` (e.g. `https://levibuilds.com`) under **Variables**. Link previews already work without it, because the server fills in absolute URLs from the address each visitor used. `SITE_URL` just pins them to one canonical address.
 
 Every push to `main` redeploys automatically.
 
@@ -75,12 +76,20 @@ npm start
 
 ## The four seasons
 
-| Season | Months | Look | Levi wears | Featured service |
-|---|---|---|---|---|
-| Winter · *Frost* | Dec–Feb | violet + ice blue, silver, snowfall | beanie + knit scarf | **Clear Path Snow Removal** |
-| Spring · *Bloom* | Mar–May | lilac + fresh green, rose gold, petals | varsity jacket | Concrete & Masonry |
-| Summer · *Golden Hour* | Jun–Aug | magenta + sunset orange, gold, fireflies | tee + shades | Decks & Fencing |
-| Fall · *Harvest* | Sep–Nov | plum + burnt orange, copper, leaves | flannel | Roofing & Gutters |
+| Season | Months | Look | Hero scene | Levi wears | Featured service |
+|---|---|---|---|---|---|
+| Winter · *Frost* | Dec–Feb | violet + ice blue, silver, snowfall with ice crystals | blue-hour street with a freshly cleared driveway | beanie + knit scarf | **Clear Path Snow Removal** |
+| Spring · *Bloom* | Mar–May | lilac + fresh green, rose gold, petals | pre-dawn blossoms and a new concrete walkway | varsity jacket | Concrete & Masonry |
+| Summer · *Golden Hour* | Jun–Aug | magenta + sunset orange, gold, fireflies | sunset over a new cedar deck | tee + shades | Decks & Fencing |
+| Fall · *Harvest* | Sep–Nov | plum + burnt orange, copper, real falling leaves | dusk, new roof with copper gutters | flannel | Roofing & Gutters |
+
+**Seasonal imagery.** Each season has a cinematic backdrop behind the hero, shown under a legibility scrim with a slow drift. Phones get a separate vertical composition. The page is tinted by a tiny blurred copy of the same image. The falling particles are real cut-out leaves, blossom petals and snow crystals. Files load in AVIF with a WebP fallback, and only the active season's images download:
+
+- Backdrops: about 35–95 KB each.
+- Sprite sheets: 18–35 KB each.
+- Tints: 0.3 KB each.
+
+These backdrops are atmospheric scenes, not Levi's jobs; his real project photos go in the service galleries. The images were rendered locally with Z-Image Turbo (Apache-2.0), which allows commercial use. [`tools/assets/`](tools/assets/README.md) has the prompts and the pipeline to re-render them.
 
 - A season a visitor picks lasts for their visit.
 - You can share a link to a specific season, e.g. `https://your-domain/?season=winter` for a snow-season promotion.
@@ -136,13 +145,17 @@ The seasonal outfits belong to the placeholder illustration, so they won't carry
 ## Project structure
 
 ```
-server.js          zero-dependency production server (static files, compression, CSP, /healthz, /api/quote)
+server.js          zero-dependency production server (static files, compression, CSP, /healthz,
+                   /api/quote, fills in absolute URLs for share cards)
 package.json       "npm start"; Railway detects Node from this
 railway.json       start command, health check, restart policy
 tools/
   gen-placeholders.js   regenerates the placeholder images (npm run placeholders)
+  assets/               prompts + pipeline that rendered the seasonal imagery on the GPU box
 public/
-  index.html  404.html  favicon.svg  robots.txt
+  index.html  404.html  favicon.svg  robots.txt  site.webmanifest
+  og-image.jpg       1200×630 share card (four seasons)
+  apple-touch-icon.png  icon-512.png
   styles.css         layout & components (colors come from seasonal tokens)
   seasons.css        the four seasonal themes + Levi's outfits + hero decor
   js/
@@ -159,6 +172,7 @@ public/
     motion.js        reduce-motion helper
   assets/
     tattoo.svg  map.svg
+    seasons/         hero backdrops (desktop + mobile, AVIF/WebP), page tints, particle sprites
     photos/          Levi, work, passions, family
     projects/        6 job photos per service
 ```
