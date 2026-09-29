@@ -1,0 +1,18 @@
+# dependencies (none today, but just in case)
+node_modules/
+
+# local env / secrets — set QUOTE_WEBHOOK_URL in Railway's Variables tab instead
+.env
+.env.*
+
+# logs & OS junk
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# local tooling
+.claude/
+.vscode/
+.idea/

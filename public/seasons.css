@@ -1,0 +1,124 @@
+/* =====================================================================
+   seasons.css — four seasonal themes.
+   Each block re-grades the whole site: surfaces, accents, metal seams,
+   title gradients, ambient particles (--fx-*) and Levi's outfit (--fig-*).
+   Purple is the brand thread through every season (CTA + gems).
+   CTA colors (--cta-1/--cta-2) all pass WCAG AA (≥4.5:1) with white text.
+   ===================================================================== */
+
+/* ---------- WINTER · "Frost" — also the fallback defaults ---------- */
+:root,
+[data-season="winter"]{
+  --void:#050811; --bg:#0A0F1D; --bg-glow:#1B2750;
+  --surface:#121A2E; --surface-2:#1A2442; --surface-deep:#0B1120;
+  --text:#EEF3FF; --muted:#A3B0CC;
+  --accent:#A78BFA; --accent-2:#7DD3FC;
+  --cta-1:#7651EE; --cta-2:#5537CC;
+  --metal:#C5D1DF; --metal-bright:#EEF4FB;                        /* silver */
+  --title-1:#F4F8FF; --title-2:#CBBEFF; --title-3:#93ABFF; --title-4:#5C70D8;
+  --head-1:#FFFFFF; --head-2:#DCE7FF; --head-3:#A9B8F5; --head-4:#7C8BD8;
+  --fx-1:#FFFFFF; --fx-2:#D6ECFF; --fx-3:#C3CCFF; --fx-4:#FFFFFF;  /* snow */
+
+  --fig-garment-a:#2B3666; --fig-garment-b:#141A38; --fig-garment-sheen:#5A67A8; --fig-collar:#0D1130;
+  --fig-sheen:#9FB4FF; --fig-rim:#A9CCFF; --fig-chain:var(--metal-bright);
+  --fig-hat:#1B1F2E; --fig-hat-cuff:#262B40; --fig-scarf:#5B3FD6; --fig-scarf-stripe:#7DD3FC;
+  --fig-var-sleeve:#F1E7D0;
+  --fig-plaid-base:#7A2E1E; --fig-plaid-band:#1E0E0A; --fig-plaid-line:#E8843F;
+}
+
+/* ---------- SPRING · "Bloom" ---------- */
+[data-season="spring"]{
+  --void:#040A07; --bg:#09140F; --bg-glow:#17402C;
+  --surface:#10201A; --surface-2:#172D24; --surface-deep:#0A1612;
+  --text:#F1FAF4; --muted:#A8C3B4;
+  --accent:#D0A2FF; --accent-2:#6EE7A0;
+  --cta-1:#9442E0; --cta-2:#7428C0;
+  --metal:#E6B3A0; --metal-bright:#F8DACD;                        /* rose gold */
+  --title-1:#F2FFF7; --title-2:#B8F5CF; --title-3:#6EE7A0; --title-4:#2E9E68;
+  --head-1:#FFFFFF; --head-2:#E4FFF0; --head-3:#B7EBCB; --head-4:#D0A2FF;
+  --fx-1:#FFC9DF; --fx-2:#FFF1F6; --fx-3:#F7A6CD; --fx-4:#FFFFFF;  /* petals */
+
+  --fig-garment-a:#1F6B47; --fig-garment-b:#0F3F29; --fig-garment-sheen:#4FA878; --fig-collar:#0B2A1C;
+  --fig-sheen:#D0A2FF; --fig-rim:#FFD6E4;
+}
+
+/* ---------- SUMMER · "Golden Hour" ---------- */
+[data-season="summer"]{
+  --void:#0B0610; --bg:#140B18; --bg-glow:#421A36;
+  --surface:#1C1220; --surface-2:#28182D; --surface-deep:#140C17;
+  --text:#FFF6EE; --muted:#D4BCB8;
+  --accent:#F472B6; --accent-2:#FFA94D;
+  --cta-1:#B02A78; --cta-2:#C2410C;
+  --metal:#E9B949; --metal-bright:#FFE08A;                        /* gold */
+  --title-1:#FFF8E7; --title-2:#FFD48A; --title-3:#FF9A5C; --title-4:#E0479E;
+  --head-1:#FFFFFF; --head-2:#FFE8C2; --head-3:#FFB88A; --head-4:#F07AB0;
+  --fx-1:#FFE9A3; --fx-2:#FFC46B; --fx-3:#FFF6D6; --fx-4:#FFB38A;  /* fireflies */
+
+  --fig-garment-a:#F4EEE6; --fig-garment-b:#CDBFAE; --fig-garment-sheen:#FFFFFF; --fig-collar:#B9AA98;
+  --fig-sheen:#FFC46B; --fig-rim:#FFC37A; --fig-chain:#C9962E;
+}
+
+/* ---------- FALL · "Harvest" ---------- */
+[data-season="fall"]{
+  --void:#0B0706; --bg:#150E0C; --bg-glow:#44210F;
+  --surface:#1E1512; --surface-2:#2A1D17; --surface-deep:#150F0D;
+  --text:#FFF4EA; --muted:#D3BBA9;
+  --accent:#D08CF0; --accent-2:#F28C38;
+  --cta-1:#9A45B5; --cta-2:#732F8A;
+  --metal:#D08A52; --metal-bright:#F2B98A;                        /* copper */
+  --title-1:#FFF3E2; --title-2:#FFCC7A; --title-3:#F28C38; --title-4:#B8432B;
+  --head-1:#FFFFFF; --head-2:#FFE6C8; --head-3:#F5B27E; --head-4:#D08CF0;
+  --fx-1:#E8743B; --fx-2:#F2B84B; --fx-3:#C0452D; --fx-4:#9A5A2E;  /* leaves */
+
+  --fig-garment-a:#6E2A1C; --fig-garment-b:#3A140D; --fig-garment-sheen:#B8563A; --fig-collar:#2A0F0A;
+  --fig-sheen:#F0A060; --fig-rim:#F2A065;
+}
+
+/* =====================================================================
+   Levi dresses for the season
+   ===================================================================== */
+[data-season="winter"] .outfit--winter,
+[data-season="spring"] .outfit--spring,
+[data-season="summer"] .outfit--summer,
+[data-season="fall"]   .outfit--fall{ display:inline; }
+
+/* =====================================================================
+   Seasonal hero decor
+   ===================================================================== */
+[data-season="winter"] .hero-ground--winter,
+[data-season="spring"] .hero-ground--spring,
+[data-season="fall"]   .hero-ground--fall{ display:block; }
+
+/* winter: the snowbank is drawn in the SVG; the shoveled gap is the "clear path" */
+.hero-ground--winter{ filter:drop-shadow(0 -2px 6px rgba(160,190,255,.18)); }
+
+/* fall: leaves settled on the ledge */
+.leaves .leaf-a{ fill:var(--fx-1); }
+.leaves .leaf-b{ fill:var(--fx-2); }
+.leaves .leaf-c{ fill:var(--fx-3); }
+
+/* spring: sprouts + blossoms */
+.sprouts use{ fill:none; stroke:var(--accent-2); stroke-width:2.2; stroke-linecap:round; }
+.blooms use{ fill:var(--fx-1); }
+.bloom-centers circle{ fill:var(--metal-bright); }
+
+/* summer: late sun + lens flare in the corner */
+[data-season="summer"] .hero__sun{ display:block; }
+.hero__sun{
+  position:absolute; top:-170px; right:-110px; z-index:-1; pointer-events:none;
+  width:min(560px,85vw); aspect-ratio:1/1; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,214,140,.34) 0%, rgba(255,160,90,.15) 36%, transparent 68%);
+}
+.hero__sun::after{
+  content:""; position:absolute; left:-55%; right:35%; top:52%; height:2px;
+  transform:rotate(-9deg);
+  background:linear-gradient(90deg, transparent, rgba(255,220,160,.55), transparent);
+  filter:blur(1px);
+}
+
+/* =====================================================================
+   Season switch — circular reveal (View Transitions, see seasons.js)
+   ===================================================================== */
+html.vt-season::view-transition-old(root),
+html.vt-season::view-transition-new(root){ animation:none; mix-blend-mode:normal; }
+html.vt-season .panel{ view-transition-name:none; }

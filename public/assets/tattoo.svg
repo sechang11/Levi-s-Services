@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="340" viewBox="0 0 340 340">
+  <!-- PLACEHOLDER tattoo flash — generic street/blackwork motifs, no words/iconography.
+       Swap this whole file for Levi's real tattoo line art later (keep fill="none",
+       black strokes, ~2px width so it stays a faint etch). The page tiles it at low
+       opacity with multiply blend, so it reads as etched into the dark surface. -->
+  <g fill="none" stroke="#000" stroke-opacity="0.9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- tribal blackwork sweep -->
+    <path d="M40 250 C70 180 60 120 110 90 C95 130 120 150 150 140 C120 175 130 215 90 255 Z"/>
+    <path d="M150 140 C190 120 235 140 250 185 C228 165 205 168 196 188"/>
+    <!-- five-point street star -->
+    <path d="M268 60 l9 22 24 2 -18 16 6 24 -21 -13 -21 13 6 -24 -18 -16 24 -2 z"/>
+    <!-- blank script banner (no lettering) -->
+    <path d="M60 300 q40 -16 90 -6 t110 -2"/>
+    <path d="M70 312 q60 14 130 4"/>
+    <path d="M58 300 l4 -8 8 8 -8 6 z"/>
+    <path d="M262 292 l-4 -8 -8 8 8 8 z"/>
+    <!-- fine-line rose swirl + teardrop -->
+    <path d="M250 250 q22 -10 30 8 q8 18 -10 24 q-16 4 -20 -10 q12 4 14 -6 q-2 -10 -14 -16 z"/>
+    <path d="M150 250 q40 -34 80 0 q-40 30 -80 0 z"/>
+    <path d="M120 40 q-14 18 -2 34 q12 -16 2 -34 z"/>
+    <!-- small tribal flicks -->
+    <path d="M300 140 q18 -8 30 4 M300 150 q14 0 26 8"/>
+    <path d="M20 120 q-12 14 -2 28"/>
+    <!-- crescent -->
+    <path d="M180 70 a26 26 0 1 0 18 44 a20 20 0 1 1 -18 -44 z"/>
+  </g>
+  <!-- dotwork cluster -->
+  <g fill="#000" fill-opacity="0.9">
+    <circle cx="300" cy="250" r="1.8"/>
+    <circle cx="312" cy="262" r="1.8"/>
+    <circle cx="290" cy="264" r="1.8"/>
+    <circle cx="44" cy="56" r="1.6"/>
+    <circle cx="54" cy="66" r="1.6"/>
+    <circle cx="36" cy="68" r="1.6"/>
+  </g>
+</svg>
