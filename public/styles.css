@@ -35,8 +35,8 @@ html{
   background:var(--void);
   color-scheme:dark;
   scroll-padding-top:72px;
+  scroll-behavior:smooth;
 }
-@media (prefers-reduced-motion:no-preference){ html{ scroll-behavior:smooth; } }
 body{
   margin:0; min-height:100vh;
   color:var(--text);
@@ -98,9 +98,7 @@ body::after{    /* cinematic vignette — above content, click-through */
 .season-fx{    /* seasonal particles (fx.js) — above the etch, behind content */
   position:fixed; inset:0; width:100%; height:100%; z-index:-1; pointer-events:none;
 }
-@media (prefers-reduced-motion:no-preference){
-  body::before,.hero__ink{ animation:ink-drift 80s linear infinite; }
-}
+body::before,.hero__ink{ animation:ink-drift 80s linear infinite; }
 @keyframes ink-drift{ to{ background-position:340px 340px; } }
 
 /* =====================================================================
@@ -188,6 +186,27 @@ body::after{    /* cinematic vignette — above content, click-through */
 }
 .hero__sun{ display:none; }
 
+/* pause / play all motion (motion.js) — the WCAG 2.2.2 control */
+.motion-toggle{
+  position:absolute; z-index:2; top:clamp(12px,2.4vw,20px); right:clamp(12px,3vw,28px);
+  display:inline-flex; align-items:center; gap:8px; min-height:36px; padding:0 14px 0 11px;
+  border:0; border-radius:999px; cursor:pointer;
+  background:color-mix(in oklab, var(--void) 62%, transparent);
+  box-shadow:inset 0 0 0 1px var(--hairline-metal);
+  color:var(--muted); font:600 11px/1 var(--font-mono); letter-spacing:.06em; text-transform:uppercase;
+  transition:color .2s, box-shadow .2s;
+}
+.motion-toggle:hover{ color:var(--text); box-shadow:inset 0 0 0 1px var(--accent); }
+.motion-toggle svg{ width:13px; height:13px; flex:none; color:var(--accent-2); }
+.motion-toggle[hidden],.footer__motion[hidden]{ display:none; }
+[data-motion-toggle][data-state="paused"] .motion-toggle__pause,
+[data-motion-toggle][data-state="playing"] .motion-toggle__play{ display:none; }
+@media (max-width:560px){
+  .hero .eyebrow{ padding-inline:46px; }   /* a long city name wraps instead of running under the button */
+  .motion-toggle{ width:40px; min-height:40px; padding:0; justify-content:center; }
+  .motion-toggle span{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+}
+
 /* seasonal backdrop photo (AVIF/WebP from seasons.js) under a legibility scrim */
 .hero__photo{
   position:absolute; inset:0; z-index:-2; display:block; overflow:hidden; pointer-events:none;
@@ -198,6 +217,7 @@ body::after{    /* cinematic vignette — above content, click-through */
   display:block; width:100%; height:100%;
   object-fit:cover; object-position:var(--photo-pos, 50% 72%);
   transform:scale(1.04); transform-origin:50% 60%;
+  animation:photo-drift 44s ease-in-out infinite alternate;
 }
 .hero__photo::after{
   content:""; position:absolute; inset:0;
@@ -209,8 +229,6 @@ body::after{    /* cinematic vignette — above content, click-through */
       color-mix(in oklab, var(--void) 30%, transparent) 62%,
       color-mix(in oklab, var(--void) 92%, transparent) 100%);
 }
-@media (prefers-reduced-motion:no-preference){ .hero__photo img{ animation:photo-drift 44s ease-in-out infinite alternate; } }
-html[data-motion="full"] .hero__photo img{ animation:photo-drift 44s ease-in-out infinite alternate; }
 @keyframes photo-drift{
   from{ transform:scale(1.04) translate3d(0,0,0); }
   to{ transform:scale(1.11) translate3d(-1.2%,-1.4%,0); }
@@ -654,6 +672,74 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 @media (hover:none){ .thumb__zoom,.photo__zoom{ opacity:1; } }
 
 /* =====================================================================
+   THE WOODSHOP — handmade furniture, under the services list
+   ===================================================================== */
+.woodshop{
+  position:relative; isolation:isolate; overflow:hidden;
+  margin-top:calc(var(--space)*5);
+  display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:clamp(20px,3.5vw,44px); align-items:center;
+  padding:clamp(22px,3.6vw,44px);
+  border-radius:var(--radius);
+  background:#1b120c;   /* walnut, until the texture arrives */
+  box-shadow:inset 0 0 0 1px var(--hairline-metal), 0 22px 44px -26px rgba(0,0,0,.85);
+}
+.woodshop::before{   /* oiled walnut, pulled into the season's palette by the overlay */
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:
+    linear-gradient(100deg, color-mix(in oklab, var(--void) 84%, transparent) 0%, color-mix(in oklab, var(--void) 58%, transparent) 50%, color-mix(in oklab, var(--void) 38%, transparent) 100%),
+    url("assets/woodshop/walnut-1600.webp") center / cover no-repeat;
+  background:
+    linear-gradient(100deg, color-mix(in oklab, var(--void) 84%, transparent) 0%, color-mix(in oklab, var(--void) 58%, transparent) 50%, color-mix(in oklab, var(--void) 38%, transparent) 100%),
+    image-set(url("assets/woodshop/walnut-1600.avif") type("image/avif"), url("assets/woodshop/walnut-1600.webp") type("image/webp")) center / cover no-repeat;
+}
+.woodshop::after{    /* the brand seam, along the top edge */
+  content:""; position:absolute; left:0; right:0; top:0; height:3px;
+  background:repeating-linear-gradient(45deg,
+    var(--accent) 0 12px, var(--ink) 12px 14px, var(--metal) 14px 16px, var(--ink) 16px 28px);
+  opacity:.85;
+}
+.woodshop__title{
+  margin:8px 0 12px;
+  font-family:var(--font-display); font-weight:400; text-transform:uppercase; letter-spacing:-.01em;
+  font-size:clamp(1.9rem,4.4vw,2.9rem); line-height:1;
+}
+.woodshop__lede{ margin:0 0 16px; max-width:52ch; }
+.woodshop__types{ list-style:none; margin:0 0 14px; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
+.woodshop__types li{
+  padding:5px 11px; border-radius:999px; font-size:.84rem; line-height:1.3;
+  background:color-mix(in oklab, var(--void) 55%, transparent);
+  box-shadow:inset 0 0 0 1px var(--hairline-metal);
+}
+.woodshop__note{ margin:0 0 20px; font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+.woodshop__actions{ display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px; }
+.woodshop__call{ color:var(--muted); font-size:.92rem; text-decoration:none; }
+.woodshop__call:hover{ color:var(--text); text-decoration:underline; text-decoration-color:var(--accent-2); }
+
+/* bento: the hero piece takes a 2×2 block, four pieces around it */
+.woodshop__gallery{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.woodshop__shot{
+  position:relative; display:block; margin:0; padding:0; border:0; overflow:hidden; cursor:zoom-in;
+  border-radius:var(--radius-sm); aspect-ratio:4/3;
+  background:var(--surface-deep); color:inherit; font:inherit;
+  box-shadow:inset 0 0 0 1px var(--hairline);
+  transition:box-shadow .2s;
+}
+.woodshop__shot:first-child{ grid-column:span 2; grid-row:span 2; aspect-ratio:auto; }
+.woodshop__shot img{ width:100%; height:100%; object-fit:cover; transition:transform .3s var(--ease); }
+.woodshop__shot:hover img,.woodshop__shot:focus-visible img{ transform:scale(1.04); }
+.woodshop__shot:hover,.woodshop__shot:focus-visible{ box-shadow:4px 4px 0 var(--accent); }
+.woodshop__shot:hover .thumb__zoom,.woodshop__shot:focus-visible .thumb__zoom{ opacity:1; }
+@media (hover:none){ .woodshop__shot .thumb__zoom{ opacity:1; } }
+.woodshop__shot:not(:first-child) .thumb__cap{ left:6px; bottom:6px; }
+@media (max-width:980px){
+  .woodshop{ grid-template-columns:1fr; }
+}
+@media (max-width:560px){
+  .woodshop__gallery{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .woodshop__shot:first-child{ grid-row:auto; aspect-ratio:16/10; }
+}
+
+/* =====================================================================
    MY STORY — Levi, his work, his passions, his family
    ===================================================================== */
 .photo{
@@ -828,6 +914,12 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
   border-top:1px solid var(--hairline); font-size:11px; color:var(--muted);
 }
 .footer__season{ color:var(--accent-2); }
+.footer__motion{
+  display:inline-flex; align-items:center; gap:6px; min-height:24px; padding:0; border:0; background:none; cursor:pointer;
+  color:var(--muted); font:inherit; letter-spacing:inherit; text-transform:inherit;
+}
+.footer__motion:hover{ color:var(--text); text-decoration:underline; text-decoration-color:var(--accent-2); }
+.footer__motion svg{ width:11px; height:11px; color:var(--accent-2); }
 
 /* =====================================================================
    LIGHTBOX
@@ -917,27 +1009,22 @@ body.lb-open{ overflow:hidden; }
 }
 
 /* =====================================================================
-   REDUCED MOTION
+   MOTION OFF — motion is on by default; "Pause motion" (motion.js) sets
+   data-motion="off" and everything below freezes, remembered per device
    ===================================================================== */
-/* honored unless the page was opened with ?motion=full (demo override, see boot.js) */
-@media (prefers-reduced-motion:reduce){
-  html:not([data-motion="full"]),
-  html:not([data-motion="full"]) *,
-  html:not([data-motion="full"]) *::before,
-  html:not([data-motion="full"]) *::after{
-    animation-duration:.001ms !important;
-    animation-iteration-count:1 !important;
-    transition-duration:.001ms !important;
-    scroll-behavior:auto !important;
-  }
-  html:not([data-motion="full"]) .head-rig{ transition:none !important; }
-  html:not([data-motion="full"]) [data-expression="happy"] .head-svg{ animation:none !important; }
-  html:not([data-motion="full"]) .tabbar__progress{ animation:none !important; scale:0 1; }
-  html:not([data-motion="full"]) .season-fx{ display:none; }
+html[data-motion="off"],
+html[data-motion="off"] *,
+html[data-motion="off"] *::before,
+html[data-motion="off"] *::after{
+  animation-duration:.001ms !important;
+  animation-iteration-count:1 !important;
+  transition-duration:.001ms !important;
+  scroll-behavior:auto !important;
 }
-html[data-motion="full"]{ scroll-behavior:smooth; }
-html[data-motion="full"] body::before,
-html[data-motion="full"] .hero__ink{ animation:ink-drift 80s linear infinite; }
+html[data-motion="off"] .head-rig{ transition:none !important; }
+html[data-motion="off"] [data-expression="happy"] .head-svg{ animation:none !important; }
+html[data-motion="off"] .tabbar__progress{ animation:none !important; scale:0 1; }
+html[data-motion="off"] .season-fx{ display:none; }
 
 /* =====================================================================
    FORCED COLORS (Windows High Contrast)
@@ -955,7 +1042,9 @@ html[data-motion="full"] .hero__ink{ animation:ink-drift 80s linear infinite; }
   html,html[data-season]{ --text:#111; --muted:#444; background:#fff; }
   body{ background:#fff; color:#111; }
   body::before,body::after,.concrete,.season-fx,.hero__photo,.hero__light,.hero__ink,.hero__sun,.hero-ground,
-  .topbar .season-switch,.tabbar,.head-stage,.head-hint,.season-chip,.cta,.lightbox,.thumb::before,.svc__toggle{ display:none !important; }
+  .topbar .season-switch,.tabbar,.head-stage,.head-hint,.season-chip,.cta,.lightbox,.thumb::before,.svc__toggle,
+  .motion-toggle,.footer__motion,.woodshop::before,.woodshop::after,.woodshop__gallery{ display:none !important; }
+  .woodshop{ background:none; box-shadow:none; padding:0; }
   .hero__headline,.svc-title{ -webkit-text-fill-color:#111 !important; color:#111 !important; background:none !important; filter:none !important; }
   .svc-title::before{ display:none !important; }
   .panel[hidden]{ display:block !important; }

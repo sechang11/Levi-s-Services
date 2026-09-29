@@ -4,8 +4,8 @@
 import { SERVICES } from './content.js';
 import { openLightbox } from './lightbox.js';
 import { goToQuote } from './form.js';
+import { reduceMotion } from './motion.js';
 
-import { reduceMotion, onMotionChange } from './motion.js';
 const esc = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const byId = new Map(); // service id → .svc element
 let accordion = null;

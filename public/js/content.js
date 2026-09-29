@@ -86,6 +86,15 @@ for (const s of SERVICES) s.gallery = gallery(s.id, s.title, s.shots);
 
 export const serviceById = (id) => SERVICES.find((s) => s.id === id);
 
+/* The Woodshop: Levi's handmade furniture (the section under the services
+   list — its photos live in index.html). Not an accordion service, but it is a
+   quote topic, so "Commission a piece" pre-selects it in the form. */
+export const WOODSHOP = { id: 'furniture', title: 'Custom Furniture' };
+
+/* What the quote form's "Service" menu offers, in order. */
+export const QUOTE_TOPICS = [...SERVICES, WOODSHOP];
+export const topicById = (id) => QUOTE_TOPICS.find((s) => s.id === id);
+
 /* Four seasonal themes. Colors live in seasons.css; this is the messaging.
    featured = the service that moves to the top of the list that season. */
 export const SEASON_ORDER = ['spring', 'summer', 'fall', 'winter'];

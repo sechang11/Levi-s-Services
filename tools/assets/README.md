@@ -5,7 +5,8 @@ The seasonal hero backdrops, particle sprites, share card and app icons in `publ
 | Model | Used for | License |
 |---|---|---|
 | **Z-Image Turbo** (`z_image_turbo_bf16`, text encoder `qwen_3_4b`, VAE `ae`) | backdrops + sprites | Apache-2.0: commercial use OK |
-| **BiRefNet** (ComfyUI `RemoveBackground`) | sprite cut-outs | MIT |
+| **BiRefNet** (ComfyUI `RemoveBackground`) | sprite and portrait cut-outs | MIT |
+| **Qwen-Image-Edit 2511** (`qwen_image_edit_2511_fp8mixed`, text encoder `qwen_2.5_vl_7b`, VAE `qwen_image_vae`) + the **Lightning** 4-step LoRA | business-card art: restages Levi from a reference image | Apache-2.0 |
 
 The backdrops are **atmospheric scenes**, not Levi's work. Keep them in the hero, and never present them as project photos. Real job photos go in `public/assets/projects/`.
 
@@ -37,3 +38,41 @@ Copy `out/seasons/*` to `public/assets/seasons/`, and the other three files to `
 - `og-image.jpg` (1200×630 share card), `apple-touch-icon.png` (180, full-bleed) and `icon-512.png`.
 
 All generation settings are deterministic (fixed seeds), so the same picks reproduce the same files.
+
+## Business-card art
+
+The card fronts in `public/cards/art/` show Levi on each season's headline job, plus a studio portrait for the year-round Classic card. The same pipeline also produced the walnut texture behind the site's Woodshop section.
+
+**The reference image.** Qwen-Image-Edit restages a *reference* image of Levi. For now that is the site's own cartoon, rendered once per season so he's already in that season's outfit:
+
+```bash
+node make_figure_ref.js figure-ref.html
+```
+
+That writes a page with just the figure. Serve the site, open `figure-ref.html?season=winter` (and the other three seasons), and screenshot each at 900×1020. Upload the screenshots to the box as `~/ComfyUI/input/levi_ref_{season}.png`.
+
+**Render and pick:**
+
+```bash
+python3 make_card_jobs.py cards.json                   # 4 seasons × 5 candidates, 5 Classic portraits, 2 walnut textures
+python3 comfy_run.py cards.json                        # ~12 minutes on an RTX 5090
+bash sheets.sh                                         # includes sheets/cards_{season}.jpg
+# put the chosen stems under "cards" (and "wood") in picks.json, then:
+~/ComfyUI/venv/bin/python process_assets.py picks.json # → out/cards/{season}.jpg, classic.png; out/woodshop/walnut-1600.*
+```
+
+Copy `out/cards/*` to `public/cards/art/` and `out/woodshop/*` to `public/assets/woodshop/`, then re-export the PDFs (`node tools/export-cards.js`).
+
+- `make_card_jobs.py` takes an optional filter such as `winter classic` to re-render only those.
+- Each season gets 3 Lightning renders (4 steps, about 5 s) and 2 full-quality renders (30 steps, about 65 s).
+- The Classic portrait is cut out with BiRefNet, so the card's own background shows through.
+
+**Redo them with Levi's real photo.** This is the upgrade for when his photos arrive:
+
+1. Use one clear, front-facing photo as the reference. Upload it as `levi_ref_{season}.png`, or point `ref` in `make_card_jobs.py` at one file.
+2. Change the `KEEP` sentence to describe *him* ("keep his face, hairstyle, beard and tattoos exactly as in the photo").
+3. Keep the `STYLE` sentence if the cards should stay illustrated, so they match the site's look. Replace it with a photographic style to make them look like real photos.
+4. His **tattoo photos** can become line art for the site's etched background (`public/assets/tattoo.svg`). Trace them into clean black strokes rather than using AI renders, so the art is really his.
+
+Keep these renders on the cards and in the hero. They're illustrations of the kind of work he does, not photos of his jobs.
+

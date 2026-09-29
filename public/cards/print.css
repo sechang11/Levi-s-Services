@@ -1,0 +1,11 @@
+/* print.css — print.html: each card side is one page at the exact bleed size. */
+@page{ size:3.75in 2.25in; margin:0; }
+html,body{ margin:0; padding:0; background:#fff; }
+.sheet{ width:3.75in; height:2.25in; overflow:hidden; break-after:page; }
+.sheet:last-child{ break-after:auto; }
+.sheet .card{ --card-w:3.75in; }
+@media screen{   /* opened in a browser: lay the sheets out for a look before printing */
+  body{ background:#2a2a30; padding:24px; }
+  main{ display:flex; flex-wrap:wrap; gap:24px; }
+  .sheet{ box-shadow:0 8px 24px rgba(0,0,0,.5); }
+}

@@ -3,7 +3,7 @@
    (--rx --ry --tilt --px --py) plus data-expression, so the placeholder SVG
    and a future photo rig share this code unchanged.
 
-   · eyes ALWAYS follow the cursor; the head also turns unless reduced motion
+   · eyes ALWAYS follow the cursor; the head also turns unless motion is paused
    · hover his face → stern · click / tap anywhere → a quick smile */
 import { reduceMotion, onMotionChange } from './motion.js';
 const coarse = matchMedia('(pointer: coarse)');

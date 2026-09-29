@@ -1,6 +1,6 @@
 /* tabs.js — WAI-ARIA tabs (roving tabindex) with a sliding underline and a
    View Transitions cross-fade between panels. */
-import { reduceMotion, onMotionChange } from './motion.js';
+import { reduceMotion } from './motion.js';
 let tabs = [];
 let underline = null;
 let vt = null;

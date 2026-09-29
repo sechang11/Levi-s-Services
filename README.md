@@ -1,6 +1,6 @@
 # Levi Builds — contractor site (v2)
 
-A one-page site for Levi, a local contractor: renovations, repairs, new builds and **Clear Path Snow Removal** (driveways, walkways, steps and sidewalks). It has an interactive figure of Levi whose eyes follow your cursor, and **four seasonal themes** that switch automatically with the calendar.
+A one-page site for Levi, a local contractor: renovations, repairs, new builds, **Clear Path Snow Removal** (driveways, walkways, steps and sidewalks) and **handmade wood furniture**. It has an interactive figure of Levi whose eyes follow your cursor, and **four seasonal themes** that switch automatically with the calendar. A separate [print kit](#business-cards) has his business cards, one per season.
 
 Everything in `[brackets]` is placeholder copy, and the images are placeholders waiting for Levi's real photos. The site is built so those drop in without code changes.
 
@@ -13,7 +13,9 @@ Everything in `[brackets]` is placeholder copy, and the images are placeholders 
 - **My Story section.** Slots for photos of Levi, Levi on the job, his passions ("Off the clock") and his family, plus reviews. Every photo opens in the gallery viewer.
 - **A quote form that works.** Requests can go straight to Levi's phone (see *Quote requests* below). Until that's set up, the form opens the visitor's email app.
 - **Other additions:** a header with click-to-call, a checklist and a "Get a quote" button for every service, trust badges, SEO metadata and structured data, a favicon, and a 404 page.
-- **Accessibility and hosting:** the site respects the "reduce motion" setting, supports keyboard navigation throughout, and prints cleanly. A small zero-dependency server makes it ready for Railway.
+- **Accessibility and hosting:** motion is on by default, with a **Pause motion** button (hero corner and footer) that stops every animation and is remembered on that device. The site supports keyboard navigation throughout and prints cleanly. A small zero-dependency server makes it ready for Railway.
+- **The Woodshop.** A section under the services list for Levi's handmade furniture: a walnut-textured panel, the kinds of pieces he builds, a photo gallery, and a **Commission a piece** button that starts a quote for *Custom Furniture*.
+- **Business cards.** Four seasonal designs plus a year-round Classic, print-ready PDFs, and a demo page at `/cards/` (see [Business cards](#business-cards)).
 
 ---
 
@@ -32,7 +34,7 @@ Then open <http://localhost:5173>. The server uses `$env:PORT` if it's set.
 Two URL options are useful for previewing:
 
 - `?season=winter`, `?season=spring`, `?season=summer` or `?season=fall` forces a season.
-- `?motion=full` shows every animation even if Windows has **Animation effects** turned off. If Animation effects is off (*Settings → Accessibility → Visual effects*), the site holds still on purpose.
+- `?motion=off` / `?motion=on` sets the motion preference, the same as the **Pause motion** button (saved on that device).
 
 ---
 
@@ -98,6 +100,35 @@ These backdrops are atmospheric scenes, not Levi's jobs; his real project photos
 
 ---
 
+## Business cards
+
+Open **`/cards/`** on the running site (e.g. <http://localhost:5173/cards/>) to see every design, front and back, with download links. The page isn't linked from the site and search engines are told to skip it.
+
+- **Five designs.** Winter (Levi in a Santa hat, shoveling a driveway: *Clear Path Snow Removal*), Spring (*Concrete & Masonry*), Summer (*Decks & Fencing*), Fall (*Roofing & Gutters*), plus a year-round **Classic**.
+- **One shared back.** Name and title, phone, email, service area, a QR code to the website, every service with that season's pick starred at the top, *Licensed & insured*, the license number, and *Free estimates*.
+- **Print files** live in `public/cards/print/`: one PDF per design with two pages (front, back). Each page is 3.75 × 2.25 in, which is the 3.5 × 2 in US card plus a 0.125 in bleed, so upload them as-is. Fonts are embedded as TrueType and the artwork is 300+ ppi. `print/cmyk/` has CMYK conversions for printers that require CMYK.
+
+**Before ordering**, fill in the placeholders in `public/cards/cards.js`: last name, email, website, city and license number. The phone number is there too. The services list and seasonal picks come from `public/js/content.js`. Then re-export:
+
+```powershell
+node tools/export-cards.js
+```
+
+(`npm run cards` does the same.) This uses Edge or Chrome to rebuild the PDFs in about 10 seconds. To rebuild one design, add its name (e.g. `node tools/export-cards.js winter`).
+
+- **CMYK needs Ghostscript.** With Ghostscript on the PATH, the export also rebuilds `print/cmyk/`. Without it, the export deletes the old CMYK copies rather than leave outdated contact details lying around, and the demo page hides those links.
+- **The QR code** always encodes the `url` in `cards.js`. Keep that URL short: the dots get bigger and scan more easily.
+
+**Ordering tips:**
+
+- Paper: 16 pt matte or soft-touch, with standard corners.
+- Order a printed proof first, since dark purples print slightly darker than on screen.
+- Order 250–500 of each seasonal card a few weeks before its season.
+
+The card art was rendered from the site's cartoon of Levi. When his real photo arrives, [`tools/assets`](tools/assets/README.md#business-card-art) re-renders all five designs from it.
+
+---
+
 ## When Levi's photos arrive
 
 | Photo | Where it goes |
@@ -107,6 +138,8 @@ These backdrops are atmospheric scenes, not Levi's jobs; his real project photos
 | His passions (3) | `public/assets/photos/passion-01…03.*`, plus captions in `index.html` → *Off the clock* |
 | His family | `public/assets/photos/family-01.*`, plus the paragraph in *Who I build for* |
 | Job photos (6 per service) | `public/assets/projects/{service}-01…06.*`; if you switch from `.svg`, update the extension in `content.js` |
+| Furniture he's built (5) | `public/assets/projects/woodshop-01…05.*`, plus the captions and `alt` text in `index.html` → *The Woodshop* |
+| His tattoos | Traced into line art for `public/assets/tattoo.svg` (see *Levi's tattoos* below) |
 
 Before publishing any photo:
 
@@ -135,10 +168,12 @@ The seasonal outfits belong to the placeholder illustration, so they won't carry
 
 - [ ] Replace every `[bracketed]` placeholder in `public/index.html`: city, years, stats, hours, license, passions, family, the head-photo captions.
 - [ ] **Publish real reviews only.** Delete the placeholder review cards until you have real ones.
-- [ ] Phone number: find and replace `(555) 555-0142` and `+15555550142` in `public/index.html` and `public/js/content.js`.
+- [ ] Phone number: find and replace `(555) 555-0142` and `+15555550142` in `public/index.html`, `public/js/content.js` and `public/cards/cards.js`.
 - [ ] Email: find and replace `levi@example.com` in the same two files.
 - [ ] Update the JSON-LD block in the `<head>` of `index.html`: phone, email, area served.
 - [ ] Set `QUOTE_WEBHOOK_URL` on Railway.
+- [ ] Woodshop: confirm the kinds of pieces he builds, the woods, and the lead time (`index.html` → *The Woodshop*).
+- [ ] Business cards: fill in `public/cards/cards.js` and re-export (see [Business cards](#business-cards)).
 
 ---
 
@@ -151,7 +186,8 @@ package.json       "npm start"; Railway detects Node from this
 railway.json       start command, health check, restart policy
 tools/
   gen-placeholders.js   regenerates the placeholder images (npm run placeholders)
-  assets/               prompts + pipeline that rendered the seasonal imagery on the GPU box
+  export-cards.js       re-exports the business-card PDFs (node tools/export-cards.js)
+  assets/               prompts + pipeline that rendered the seasonal imagery and card art on the GPU box
 public/
   index.html  404.html  favicon.svg  robots.txt  site.webmanifest
   og-image.jpg       1200×630 share card (four seasons)
@@ -169,10 +205,13 @@ public/
     tabs.js          Services / My Story / Contact tabs
     lightbox.js      photo viewer
     form.js          quote form
-    motion.js        reduce-motion helper
+    motion.js        motion on/off + the Pause motion buttons
   assets/
     tattoo.svg  map.svg
     seasons/         hero backdrops (desktop + mobile, AVIF/WebP), page tints, particle sprites
     photos/          Levi, work, passions, family
-    projects/        6 job photos per service
+    projects/        6 job photos per service + 5 woodshop pieces
+    woodshop/        walnut texture behind the Woodshop section
+  cards/             business cards: demo page (index.html), print.html, cards.js (card data),
+                     qr.js (QR encoder), art/ (card illustrations), print/ (PDFs, + cmyk/)
 ```

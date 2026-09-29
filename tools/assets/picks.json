@@ -11,5 +11,7 @@
     "spring": ["spring_petal_pink_s101", "spring_petal_pink_s202", "spring_petal_white_s101", "spring_petal_white_s202",
                "spring_blossom_pink_s101", "spring_lilac_floret_s202", "spring_leaf_green_s202"],
     "winter": ["winter_flake_a_s303", "winter_flake_b_s404", "winter_flake_c_s303", "winter_flake_c_s404"]
-  }
+  },
+  "cards": { "winter": "winter_L_s31", "spring": "spring_F_s59", "summer": "summer_F_s59", "fall": "fall_F_s59", "classic": "classic_L_s31" },
+  "wood": "walnut_s5"
 }

@@ -2,6 +2,8 @@
 """Queue Z-Image Turbo jobs on the local ComfyUI API and wait for results.
 Stdlib only. Usage: python3 comfy_run.py jobs.json
 jobs.json = [{"prefix": "levi/x", "prompt": "...", "w": 1920, "h": 1088, "seed": 1, "bg_remove": false}, ...]
+  Z-Image Turbo by default; {"kind": "qwen_edit", "ref": "<file in ComfyUI/input>", "lightning": true, ...}
+  restages a reference character with Qwen-Image-Edit 2511 instead.
 Outputs land in ~/ComfyUI/output/<prefix>_00001_.png (+ _mask when bg_remove)."""
 import json
 import sys
@@ -47,6 +49,38 @@ def zimage_graph(prompt, w, h, seed, prefix, steps, sampler, bg_remove):
     return g
 
 
+def qwen_edit_graph(j):
+    """Qwen-Image-Edit 2511: restage the reference character (image in ComfyUI/input) in a new scene.
+    lightning=True → 4-step LoRA at cfg 1; otherwise full sampling (default 30 steps, cfg 4)."""
+    lightning = j.get("lightning", True)
+    g = {
+        "1": {"class_type": "UNETLoader", "inputs": {"unet_name": "qwen_image_edit_2511_fp8mixed.safetensors", "weight_dtype": "default"}},
+        "3": {"class_type": "ModelSamplingAuraFlow", "inputs": {"model": ["2" if lightning else "1", 0], "shift": 3.1}},
+        "4": {"class_type": "CFGNorm", "inputs": {"model": ["3", 0], "strength": 1.0}},
+        "5": {"class_type": "CLIPLoader", "inputs": {"clip_name": "qwen_2.5_vl_7b_fp8_scaled.safetensors", "type": "qwen_image", "device": "default"}},
+        "6": {"class_type": "VAELoader", "inputs": {"vae_name": "qwen_image_vae.safetensors"}},
+        "7": {"class_type": "LoadImage", "inputs": {"image": j["ref"]}},
+        "8": {"class_type": "TextEncodeQwenImageEditPlus", "inputs": {"clip": ["5", 0], "prompt": j["prompt"], "vae": ["6", 0], "image1": ["7", 0]}},
+        "9": {"class_type": "TextEncodeQwenImageEditPlus", "inputs": {"clip": ["5", 0], "prompt": "", "vae": ["6", 0], "image1": ["7", 0]}},
+        "10": {"class_type": "EmptySD3LatentImage", "inputs": {"width": j["w"], "height": j["h"], "batch_size": 1}},
+        "11": {"class_type": "KSampler", "inputs": {
+            "model": ["4", 0], "seed": j["seed"], "steps": j.get("steps", 4 if lightning else 30),
+            "cfg": j.get("cfg", 1.0 if lightning else 4.0), "sampler_name": "euler", "scheduler": "simple",
+            "positive": ["8", 0], "negative": ["9", 0], "latent_image": ["10", 0], "denoise": 1.0}},
+        "12": {"class_type": "VAEDecode", "inputs": {"samples": ["11", 0], "vae": ["6", 0]}},
+        "13": {"class_type": "SaveImage", "inputs": {"images": ["12", 0], "filename_prefix": j["prefix"]}},
+    }
+    if lightning:
+        g["2"] = {"class_type": "LoraLoaderModelOnly", "inputs": {
+            "model": ["1", 0], "lora_name": "Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors", "strength_model": 1.0}}
+    if j.get("bg_remove"):  # also save a BiRefNet matte (<prefix>_mask) for a cut-out
+        g["14"] = {"class_type": "LoadBackgroundRemovalModel", "inputs": {"bg_removal_name": "birefnet.safetensors"}}
+        g["15"] = {"class_type": "RemoveBackground", "inputs": {"bg_removal_model": ["14", 0], "image": ["12", 0]}}
+        g["16"] = {"class_type": "MaskToImage", "inputs": {"mask": ["15", 0]}}
+        g["17"] = {"class_type": "SaveImage", "inputs": {"images": ["16", 0], "filename_prefix": j["prefix"] + "_mask"}}
+    return g
+
+
 def main():
     path = sys.argv[1]
     jobs = json.load(open(path))
@@ -55,7 +89,10 @@ def main():
     client = str(uuid.uuid4())
     pending = {}
     for j in jobs:
-        g = zimage_graph(j["prompt"], j["w"], j["h"], j["seed"], j["prefix"], j.get("steps", 9), sampler, j.get("bg_remove", False))
+        if j.get("kind") == "qwen_edit":
+            g = qwen_edit_graph(j)
+        else:
+            g = zimage_graph(j["prompt"], j["w"], j["h"], j["seed"], j["prefix"], j.get("steps", 9), sampler, j.get("bg_remove", False))
         r = post("/prompt", {"prompt": g, "client_id": client})
         if r.get("node_errors"):
             print("node errors:", j["prefix"], r["node_errors"]); sys.exit(1)

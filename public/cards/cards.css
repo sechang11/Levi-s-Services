@@ -1,0 +1,179 @@
+/* cards.css — Levi Builds business cards (the demo page and print.html share it).
+
+   A card is 3.75 × 2.25 in: the 3.5 × 2 in US card plus a 0.125 in bleed on
+   every side. Inside, everything is sized in card points (--pt): the bleed box
+   is 270 × 162 pt, 1 pt = 1/72 in, so a card lays out identically at any
+   on-screen size and exactly in print.
+     bleed box  0–270 × 0–162      trim (the cut)  9–261 × 9–153
+     safe area  18–252 × 18–144    (keep all text in here)            */
+
+/* ---------------------------------------------------------------- palettes */
+.card[data-design="winter"]{
+  --c-bg:#0A0F22; --c-bg-2:#1A2250; --c-shade:#090B21;
+  --c-text:#F2F5FF; --c-muted:#B1BBD8; --c-accent:#B89DFF; --c-accent-2:#86D8FF; --c-metal:#C9D3E2;
+}
+.card[data-design="spring"]{
+  --c-bg:#07130F; --c-bg-2:#173427; --c-shade:#0A1A17;
+  --c-text:#F3FBF6; --c-muted:#B5CFC0; --c-accent:#D8B0FF; --c-accent-2:#7BEAA8; --c-metal:#EBBBA8;
+}
+.card[data-design="summer"]{
+  --c-bg:#12081A; --c-bg-2:#3B1434; --c-shade:#1D0719;
+  --c-text:#FFF7F0; --c-muted:#E0C8C2; --c-accent:#F882C0; --c-accent-2:#FFB45F; --c-metal:#EDC158;
+}
+.card[data-design="fall"]{
+  --c-bg:#120A08; --c-bg-2:#3B1E12; --c-shade:#1B0B0F;
+  --c-text:#FFF5EC; --c-muted:#DCC5B3; --c-accent:#DC9CF3; --c-accent-2:#F79C4C; --c-metal:#DA975F;
+}
+.card[data-design="classic"]{
+  --c-bg:#070913; --c-bg-2:#161C3A; --c-shade:#070913;
+  --c-text:#F6F1E6; --c-muted:#C2BAA8; --c-accent:#DDB65C; --c-accent-2:#EBCB7C; --c-metal:#DDB65C;
+}
+
+/* ------------------------------------------------------------------ card */
+.card{
+  --pt:calc(100cqw / 270);
+  position:relative; display:block; overflow:hidden; isolation:isolate;
+  width:var(--card-w, 3.75in); aspect-ratio:270 / 162;
+  container-type:inline-size;
+  background:radial-gradient(130% 150% at 0% 0%, var(--c-bg-2) 0%, var(--c-bg) 62%);
+  color:var(--c-text);
+  font-family:"Barlow", "Inter", system-ui, sans-serif;   /* static font: embeds as TrueType in the PDF (a variable font becomes Type 3) */
+  -webkit-font-smoothing:antialiased;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+.card *{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+:where(.card) :where(p,h3,ul){ margin:0; padding:0; }   /* zero specificity: components override freely */
+.card svg{ display:block; }
+.card__art{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:var(--art-pos, 50% 50%); }
+.card__safe{ position:absolute; inset:calc(18 * var(--pt)); }
+.card__etch{ position:absolute; inset:0; width:100%; height:100%; color:var(--c-metal); opacity:.075; pointer-events:none; }
+.card-defs{ position:absolute; width:0; height:0; overflow:hidden; }
+
+/* the mark + wordmark */
+.lockup{ display:flex; align-items:center; gap:calc(5 * var(--pt)); }
+.mark{ width:calc(19 * var(--pt)); height:calc(19 * var(--pt)); flex:none; }
+.mark__frame{ fill:color-mix(in srgb, var(--c-bg) 72%, transparent); stroke:var(--c-metal); stroke-width:1.8; }
+.mark__roof{ fill:none; stroke:var(--c-accent-2); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+.mark__l{ fill:none; stroke:var(--c-text); stroke-width:3.4; stroke-linecap:round; stroke-linejoin:round; }
+.lockup__word{ font-family:"Anton", Impact, sans-serif; font-size:calc(13.5 * var(--pt)); line-height:1; letter-spacing:.05em; }
+.lockup__word b{ font-weight:400; color:var(--c-accent); margin-left:.22em; }
+
+/* ------------------------------------------------------------------ front */
+.card__shade{
+  position:absolute; inset:0;
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--c-shade) 93%, transparent) 0%,
+      color-mix(in srgb, var(--c-shade) 86%, transparent) 30%,
+      color-mix(in srgb, var(--c-shade) 50%, transparent) 46%,
+      color-mix(in srgb, var(--c-shade) 0%, transparent) 60%),
+    linear-gradient(0deg, color-mix(in srgb, var(--c-shade) 45%, transparent) 0%, color-mix(in srgb, var(--c-shade) 0%, transparent) 30%);
+}
+.card--front .card__safe{ display:flex; flex-direction:column; }   /* lockup · feature · phone, never overlapping */
+.feat{ flex:1; display:flex; flex-direction:column; justify-content:center; width:calc(112 * var(--pt)); padding:calc(4 * var(--pt)) 0 calc(6 * var(--pt)); }
+.feat__kicker{
+  font:600 calc(5.6 * var(--pt)) / 1 "IBM Plex Mono", ui-monospace, monospace;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--c-accent-2);
+}
+.feat__title{
+  margin-top:calc(3.5 * var(--pt));
+  font:400 calc(19 * var(--pt)) / .98 "Anton", Impact, sans-serif;
+  text-transform:uppercase; letter-spacing:.005em; text-wrap:balance;
+}
+.feat__title::after{   /* short accent rule under the title */
+  content:""; display:block; width:calc(22 * var(--pt)); height:calc(1.8 * var(--pt));
+  margin-top:calc(5.5 * var(--pt)); border-radius:99px; background:var(--c-accent);
+}
+.feat__sub{ margin-top:calc(5 * var(--pt)); font-size:calc(6.8 * var(--pt)); line-height:1.35; color:var(--c-muted); }
+.call{ display:grid; gap:calc(2 * var(--pt)); }
+.call__label{
+  font:500 calc(5.6 * var(--pt)) / 1 "IBM Plex Mono", ui-monospace, monospace;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--c-muted);
+}
+.call__num{
+  display:flex; align-items:center; gap:calc(4 * var(--pt));
+  font:400 calc(11 * var(--pt)) / 1 "Archivo Black", "Arial Black", sans-serif; letter-spacing:.01em;
+}
+.call__num svg{ width:calc(10 * var(--pt)); height:calc(10 * var(--pt)); color:var(--c-accent-2); }
+
+/* where Levi stands in each illustration */
+.card[data-design="winter"] .card__art{ --art-pos:60% 50%; }
+.card[data-design="spring"] .card__art{ --art-pos:62% 50%; }
+.card[data-design="summer"] .card__art{ --art-pos:62% 50%; }
+.card[data-design="fall"] .card__art{ --art-pos:55% 50%; }
+
+/* Classic: studio portrait (cut-out) on the inked navy, gold halo behind him */
+.card--classic .card__art{
+  left:auto; right:calc(4 * var(--pt)); top:auto; bottom:0;
+  width:calc(146 * var(--pt)); height:calc(134 * var(--pt)); object-fit:contain; object-position:50% 100%;
+}
+.classic__halo{
+  position:absolute; right:calc(20 * var(--pt)); top:calc(24 * var(--pt));
+  width:calc(114 * var(--pt)); aspect-ratio:1; border-radius:50%;
+  background:radial-gradient(closest-side, color-mix(in srgb, var(--c-accent) 26%, transparent), color-mix(in srgb, var(--c-accent) 0%, transparent) 100%);
+  box-shadow:inset 0 0 0 calc(.9 * var(--pt)) color-mix(in srgb, var(--c-metal) 70%, transparent);
+}
+.card--classic .card__shade{
+  background:linear-gradient(90deg, color-mix(in srgb, var(--c-shade) 70%, transparent) 0%, color-mix(in srgb, var(--c-shade) 0%, transparent) 55%);
+}
+.card--classic .feat__title{ font-size:calc(17 * var(--pt)); }
+
+/* ------------------------------------------------------------------- back */
+.back{ display:grid; grid-template-columns:calc(122 * var(--pt)) 1fr; grid-template-rows:auto auto 1fr; column-gap:calc(14 * var(--pt)); }
+.back::after{   /* hairline between the columns */
+  content:""; position:absolute; left:calc(129 * var(--pt)); top:calc(2 * var(--pt)); bottom:calc(2 * var(--pt));
+  width:calc(.6 * var(--pt)); background:color-mix(in srgb, var(--c-metal) 45%, transparent);
+}
+.back__id{ grid-column:1; grid-row:1; }
+.back__name{ font:400 calc(15.5 * var(--pt)) / 1 "Anton", Impact, sans-serif; text-transform:uppercase; letter-spacing:.02em; white-space:nowrap; }
+.back__name.is-long{ font-size:calc(12.5 * var(--pt)); }
+.back__name.is-longer{ font-size:calc(10.5 * var(--pt)); }
+.back__role{
+  margin-top:calc(3.5 * var(--pt));
+  font:500 calc(5.4 * var(--pt)) / 1.2 "IBM Plex Mono", ui-monospace, monospace;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--c-accent-2);
+}
+.back__contact{ grid-column:1; grid-row:2; list-style:none; margin-top:calc(9 * var(--pt)); display:grid; gap:calc(4.2 * var(--pt)); }
+.back__contact li{ display:flex; align-items:center; gap:calc(5 * var(--pt)); font-size:calc(7.2 * var(--pt)); line-height:1.1; white-space:nowrap; }
+.back__contact svg{ width:calc(7.4 * var(--pt)); height:calc(7.4 * var(--pt)); flex:none; color:var(--c-accent-2); }
+.back__contact .back__phone{ font-weight:700; font-size:calc(8.2 * var(--pt)); }
+.back__qr{ grid-column:1; grid-row:3; align-self:end; display:flex; align-items:flex-end; gap:calc(7 * var(--pt)); }
+.qr{
+  flex:none; width:calc(48 * var(--pt)); aspect-ratio:1; overflow:hidden;
+  border-radius:calc(3 * var(--pt)); background:#F8F5EE;
+  box-shadow:0 0 0 calc(.8 * var(--pt)) color-mix(in srgb, var(--c-metal) 55%, transparent);
+}
+.qr svg{ width:100%; height:100%; }
+.back__qr-cap{ display:grid; gap:calc(3 * var(--pt)); padding-bottom:calc(1 * var(--pt)); }
+.back__scan,.back__legal,.back__label,.back__free{
+  font:500 calc(5.4 * var(--pt)) / 1.25 "IBM Plex Mono", ui-monospace, monospace;
+  letter-spacing:.1em; text-transform:uppercase;
+}
+.back__scan{ color:var(--c-muted); max-width:calc(60 * var(--pt)); }
+.back__web{ font-weight:600; font-size:calc(7.4 * var(--pt)); line-height:1; }
+.back__legal{ color:var(--c-muted); letter-spacing:.04em; }
+.back__svc{ grid-column:2; grid-row:1 / 4; display:flex; flex-direction:column; }
+.back__label{ color:var(--c-accent-2); font-weight:600; }
+.back__svc ul{ list-style:none; margin-top:calc(4.5 * var(--pt)); display:grid; gap:calc(2.3 * var(--pt)); }
+.back__svc li{ display:flex; align-items:center; gap:calc(3 * var(--pt)); font-size:calc(6.7 * var(--pt)); line-height:1.08; white-space:nowrap; }
+.back__svc li::before{ content:""; flex:none; width:calc(2.2 * var(--pt)); height:calc(2.2 * var(--pt)); border-radius:50%; background:var(--c-metal); opacity:.8; }
+.back__svc li.is-feat{ color:var(--c-accent-2); font-weight:700; }
+.back__svc li.is-feat::before{ display:none; }
+.back__svc li svg{ width:calc(6 * var(--pt)); height:calc(6 * var(--pt)); margin-left:calc(-1.9 * var(--pt)); margin-right:calc(-.8 * var(--pt)); color:var(--c-accent-2); }
+.back__free{
+  margin-top:auto; align-self:flex-start;
+  padding:calc(2.4 * var(--pt)) calc(5 * var(--pt)); border-radius:99px;
+  background:var(--c-accent); color:var(--c-bg); font-weight:600;
+}
+
+/* --------------------------------------------- trim / safe guides (demo + proof) */
+.guides .card::after{
+  content:""; position:absolute; inset:0; z-index:5; pointer-events:none;
+  background:
+    linear-gradient(#ff3b6b, #ff3b6b) calc(9 * var(--pt)) 0 / calc(.5 * var(--pt)) 100% no-repeat,
+    linear-gradient(#ff3b6b, #ff3b6b) calc(261 * var(--pt)) 0 / calc(.5 * var(--pt)) 100% no-repeat,
+    linear-gradient(#ff3b6b, #ff3b6b) 0 calc(9 * var(--pt)) / 100% calc(.5 * var(--pt)) no-repeat,
+    linear-gradient(#ff3b6b, #ff3b6b) 0 calc(153 * var(--pt)) / 100% calc(.5 * var(--pt)) no-repeat;
+  box-shadow:inset 0 0 0 calc(9 * var(--pt)) rgba(255,59,107,.14);
+  outline:calc(.5 * var(--pt)) dashed rgba(0,229,255,.9); outline-offset:calc(-18 * var(--pt));
+}

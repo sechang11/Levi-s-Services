@@ -43,6 +43,7 @@ const TYPES = {
   '.xml': 'application/xml; charset=utf-8',
   '.woff2': 'font/woff2',
   '.woff': 'font/woff',
+  '.pdf': 'application/pdf',
 };
 const COMPRESSIBLE = new Set(['.html', '.css', '.js', '.mjs', '.json', '.webmanifest', '.svg', '.txt', '.xml']);
 const ALWAYS_REVALIDATE = new Set(['.html', '.css', '.js', '.mjs', '.json', '.webmanifest']);
@@ -324,6 +325,13 @@ const server = http.createServer(async (req, res) => {
     }
     const abs = resolvePath(pathname);
     const file = abs ? await getFile(abs) : null;
+    if (!file && abs && !pathname.endsWith('/') && (await getFile(path.join(abs, 'index.html')))) {
+      // a folder without its slash (/cards) → /cards/, so the page's relative links resolve
+      const { search } = new URL(req.url, 'http://localhost');
+      const location = '/' + pathname.replace(/^\/+/, '') + '/' + search; // never "//host": no open redirect
+      res.writeHead(301, { ...BASE_HEADERS, Location: location, 'Cache-Control': 'public, max-age=3600', 'Content-Length': 0 });
+      return res.end();
+    }
     if (!file) return await sendNotFound(req, res);
     return sendFile(req, res, file.templated ? withOrigin(file, originOf(req)) : file);
   } catch (err) {

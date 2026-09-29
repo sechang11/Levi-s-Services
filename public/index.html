@@ -41,7 +41,7 @@
     "name": "Levi Builds",
     "url": "{{ORIGIN}}/",
     "image": "{{ORIGIN}}/og-image.jpg",
-    "description": "Local contractor — renovations, repairs, new builds and Clear Path snow removal for driveways and walkways.",
+    "description": "Local contractor — renovations, repairs, new builds, Clear Path snow removal for driveways and walkways, and handmade wood furniture.",
     "telephone": "+1-555-555-0142",
     "email": "levi@example.com",
     "areaServed": "[Your City] and about 30 miles around",
@@ -58,7 +58,8 @@
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Flooring & Tile" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Kitchen & Bath" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Roofing & Gutters" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Concrete & Masonry" } }
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Concrete & Masonry" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom handmade wood furniture" } }
       ]
     }
   }
@@ -87,6 +88,9 @@
     <symbol id="i-right" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7"/></symbol>
     <symbol id="i-heart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M12 20.3s-7.3-4.5-7.3-10.3A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.3 2.8c0 5.8-7.3 10.3-7.3 10.3z"/></symbol>
     <symbol id="i-hammer" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m13.5 8.5-9 9a1.8 1.8 0 0 0 2.5 2.5l9-9"/><path d="m11.5 6.5 3-3 6 6-3 3"/><path d="M14.5 3.5 17 2l3 3-1.5 2.5"/></g></symbol>
+    <symbol id="i-chair" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18M7 12.5h10.5V21M7 17h10.5"/><path d="M7 5.5h3M7 9h3"/></g></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><g fill="currentColor"><rect x="6" y="4.5" width="4.2" height="15" rx="1.3"/><rect x="13.8" y="4.5" width="4.2" height="15" rx="1.3"/></g></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M7.2 5.1v13.8a1.1 1.1 0 0 0 1.7.9l10.4-6.9a1.1 1.1 0 0 0 0-1.8L8.9 4.2a1.1 1.1 0 0 0-1.7.9z"/></symbol>
   </svg>
 
   <!-- ===================== FIXED BACKDROP ===================== -->
@@ -124,6 +128,13 @@
     <div class="hero__light" aria-hidden="true"></div>
     <div class="hero__ink" aria-hidden="true"></div>
     <div class="hero__sun" aria-hidden="true"></div>
+
+    <!-- pause / play every animation on the page (motion.js) -->
+    <button class="motion-toggle" type="button" data-motion-toggle hidden>
+      <svg class="motion-toggle__pause" aria-hidden="true"><use href="#i-pause" /></svg>
+      <svg class="motion-toggle__play" aria-hidden="true"><use href="#i-play" /></svg>
+      <span data-motion-label>Pause motion</span>
+    </button>
 
     <p class="eyebrow">LOCAL CONTRACTOR — [YOUR CITY]</p>
 
@@ -441,6 +452,56 @@
           <li>Call or text <a href="tel:+15555550142">(555) 555-0142</a> for a free quote.</li>
         </ul>
       </noscript>
+
+      <!-- ===== THE WOODSHOP — swap the placeholder photos in assets/projects/woodshop-0N ===== -->
+      <section class="woodshop" aria-labelledby="h-woodshop">
+        <div class="woodshop__copy">
+          <p class="kicker"><svg aria-hidden="true"><use href="#i-chair" /></svg>The Woodshop</p>
+          <h2 class="woodshop__title" id="h-woodshop">Handmade furniture</h2>
+          <p class="woodshop__lede">When the job sites go quiet, the shop lights come on. Levi builds solid-wood furniture by hand — one piece at a time, sized for your space and built to outlast the house it lives in.</p>
+          <ul class="woodshop__types" aria-label="Pieces Levi builds">
+            <li>Dining tables</li>
+            <li>Benches</li>
+            <li>Floating shelves</li>
+            <li>Cutting boards</li>
+            <li>Nightstands</li>
+            <li>One-off builds</li>
+          </ul>
+          <p class="woodshop__note">[Walnut · white oak · maple · reclaimed] — [lead time 3–6 weeks]</p>
+          <div class="woodshop__actions">
+            <button class="cta cta--sm" type="button" data-quote="furniture">Commission a piece</button>
+            <a class="woodshop__call" href="tel:+15555550142">or call (555) 555-0142</a>
+          </div>
+        </div>
+
+        <div class="woodshop__gallery">
+          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-cap="Live-edge dining table · [wood, size]" aria-label="Open photo 1 of 5: live-edge dining table">
+            <img src="assets/projects/woodshop-01.svg" alt="Live-edge dining table with trestle legs (placeholder photo)" width="640" height="480" loading="lazy" decoding="async" />
+            <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
+            <span class="thumb__cap">Dining table</span>
+          </button>
+          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-cap="Plank bench · [wood, size]" aria-label="Open photo 2 of 5: plank bench">
+            <img src="assets/projects/woodshop-02.svg" alt="Plank bench with splayed legs (placeholder photo)" width="640" height="480" loading="lazy" decoding="async" />
+            <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
+            <span class="thumb__cap">Bench</span>
+          </button>
+          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-cap="Floating shelves · [wood, size]" aria-label="Open photo 3 of 5: floating shelves">
+            <img src="assets/projects/woodshop-03.svg" alt="Three floating shelves (placeholder photo)" width="640" height="480" loading="lazy" decoding="async" />
+            <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
+            <span class="thumb__cap">Shelves</span>
+          </button>
+          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-cap="End-grain cutting board · [wood, size]" aria-label="Open photo 4 of 5: end-grain cutting board">
+            <img src="assets/projects/woodshop-04.svg" alt="End-grain checkerboard cutting board (placeholder photo)" width="640" height="480" loading="lazy" decoding="async" />
+            <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
+            <span class="thumb__cap">Cutting board</span>
+          </button>
+          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-cap="Nightstand · [wood, size]" aria-label="Open photo 5 of 5: nightstand">
+            <img src="assets/projects/woodshop-05.svg" alt="Mid-century nightstand with one drawer (placeholder photo)" width="640" height="480" loading="lazy" decoding="async" />
+            <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
+            <span class="thumb__cap">Nightstand</span>
+          </button>
+        </div>
+      </section>
     </section>
 
     <!-- ===== MY STORY ===== -->
@@ -634,7 +695,7 @@
           <path class="brand__roof" d="M9 18.5 20 9.5l11 9" />
           <path class="brand__l" d="M16.5 16.5V29h10" />
         </svg>
-        <p><strong>Levi Builds</strong> — renovations, repairs, new builds &amp; Clear Path snow removal in [Your City].</p>
+        <p><strong>Levi Builds</strong> — renovations, repairs, new builds, Clear Path snow removal &amp; handmade furniture in [Your City].</p>
       </div>
       <nav class="footer__links" aria-label="Footer">
         <a href="#panel-services" data-goto-tab="services">Services</a>
@@ -649,6 +710,11 @@
     <div class="footer__legal">
       <span>© <span data-year>2026</span> Levi Builds · Licensed &amp; insured · [LIC #000000]</span>
       <span class="footer__season">Theme: <span data-season-label>Fall</span> — this site changes with the seasons</span>
+      <button class="footer__motion" type="button" data-motion-toggle hidden>
+        <svg class="motion-toggle__pause" aria-hidden="true"><use href="#i-pause" /></svg>
+        <svg class="motion-toggle__play" aria-hidden="true"><use href="#i-play" /></svg>
+        <span data-motion-label>Pause motion</span>
+      </button>
     </div>
   </footer>
 

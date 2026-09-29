@@ -1,6 +1,6 @@
 /* fx.js — seasonal ambient particles on one fixed <canvas> behind the content.
    winter: snow · spring: petals · summer: fireflies · fall: leaves.
-   Colors come from the season's --fx-1…4 tokens. Off for reduced motion,
+   Colors come from the season's --fx-1…4 tokens. Off while motion is paused,
    paused while the tab is hidden, density scaled to the screen. */
 import { reduceMotion, onMotionChange } from './motion.js';
 const TAU = Math.PI * 2;
@@ -242,5 +242,9 @@ export function initFx() {
     timer = setTimeout(() => { resize(); if (W !== lastW) { lastW = W; seed(); } }, 150);
   }, { passive: true });
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-  onMotionChange(() => { if (reduceMotion()) { stop(); clear(); } else start(); });
+  onMotionChange(() => {
+    if (reduceMotion()) { stop(); clear(); return; }
+    if (season) { sheetFor(season); seed(); } // sprites were skipped while paused
+    start();
+  });
 }

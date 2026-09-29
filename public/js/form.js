@@ -2,7 +2,7 @@
    Validates, POSTs to /api/quote (server.js forwards it to Levi's phone via
    QUOTE_WEBHOOK_URL), and falls back to the visitor's email app when the
    webhook isn't configured — so a lead is never lost. */
-import { SERVICES, CONTACT, serviceById } from './content.js';
+import { QUOTE_TOPICS, CONTACT, topicById } from './content.js';
 import { showTab, scrollToTabs } from './tabs.js';
 
 let form = null;
@@ -19,7 +19,7 @@ const FIELDS = {
 /** Jump to the Contact tab with a service pre-selected. */
 export async function goToQuote(serviceId) {
   await showTab('contact');
-  const s = serviceById(serviceId);
+  const s = topicById(serviceId);
   if (select) select.value = s ? s.title : '';
   scrollToTabs();
   form?.querySelector('#c-name')?.focus({ preventScroll: true });
@@ -107,7 +107,7 @@ export function initForm() {
   statusEl = form.querySelector('.form-status');
   submitBtn = form.querySelector('[data-submit]');
   select = form.querySelector('#c-service');
-  select?.insertAdjacentHTML('beforeend', SERVICES.map((s) => {
+  select?.insertAdjacentHTML('beforeend', QUOTE_TOPICS.map((s) => {
     const t = s.title.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
     return `<option value="${t}">${t}</option>`;
   }).join(''));

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="color-scheme" content="dark" />
+  <title>Business cards — Levi Builds</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Archivo+Black&amp;family=Barlow:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" />
+  <link rel="stylesheet" href="cards.css" />
+  <link rel="stylesheet" href="demo.css" />
+  <script type="module" src="page.js"></script>
+</head>
+<body data-page="demo">
+  <header class="demo-head">
+    <a class="demo-home" href="../">← Levi Builds site</a>
+    <p class="demo-kicker">Print kit · demo</p>
+    <h1>Business cards</h1>
+    <p class="demo-lede">Four seasonal fronts, each showing Levi on that season's headline job, plus a year-round Classic. Every design shares one back: contact details, every service with the season's pick on top, and a QR code to the website.</p>
+    <p class="demo-warn"><b>Sample details.</b> The last name, email, website, city and license number are placeholders, set in <code>cards/cards.js</code>. Fill them in and re-export the PDFs (<code>node tools/export-cards.js</code>) before ordering. The QR code follows the website automatically.</p>
+    <label class="demo-toggle"><input type="checkbox" data-guides /> Show trim &amp; safe lines</label>
+  </header>
+
+  <main class="demo-grid" data-cards>
+    <p class="demo-loading">Loading the cards…</p>
+  </main>
+
+  <section class="demo-specs" aria-labelledby="h-specs">
+    <h2 id="h-specs">Sending them to the printer</h2>
+    <dl>
+      <div><dt>Card</dt><dd>3.5 × 2 in: the US standard size. Double-sided. The front sells the season; the back is the reference card people keep.</dd></div>
+      <div><dt>Files</dt><dd>One PDF per design with two pages, front then back, each 3.75 × 2.25 in. That includes a 0.125 in bleed on every side, which the printer trims off. Fonts are embedded and the artwork is 300+ ppi.</dd></div>
+      <div><dt>Color</dt><dd>Upload the RGB PDF unless the printer asks for CMYK. Dark purples and blues print a little darker than they look on screen, so order a printed proof first.</dd></div>
+      <div><dt>Paper</dt><dd>16 pt matte or soft-touch feels premium and takes a pen. Spot UV on the logo is a nice upgrade if it's offered. Standard (square) corners.</dd></div>
+      <div><dt>Quantity</dt><dd>250–500 of each seasonal card, ordered a few weeks before its season. The Classic works year-round for everything else.</dd></div>
+    </dl>
+    <p class="demo-guide-key"><span class="k k--trim"></span>Trim (the cut) <span class="k k--safe"></span>Safe area: text stays inside it <span class="k k--bleed"></span>Bleed: art only, trimmed off</p>
+  </section>
+
+  <footer class="demo-foot">Levi Builds · business card demo · not linked from the site</footer>
+</body>
+</html>

@@ -8,6 +8,7 @@
  *
  * Writes
  *   public/assets/projects/{service}-01..06.svg  6 gallery shots per service (640x360)
+ *   public/assets/projects/woodshop-01..05.svg   handmade furniture pieces (640x480)
  *   public/assets/photos/levi-portrait.svg       silhouette bust (480x600)
  *   public/assets/photos/passion-01..03.svg      "off the clock" photo slots (600x600)
  *   public/assets/photos/family-01.svg           family group slot (900x600)
@@ -437,6 +438,128 @@ function iconConcrete(W) {
     `<path d="${mortar}" stroke-width="${fine}"/>` +
     `<path d="${trowel}" transform="translate(-58 14) rotate(-32)"/></g>`
   );
+}
+
+/* ====================================================== woodshop pieces
+ * Handmade furniture for the Woodshop gallery, drawn in the same ~200x200
+ * icon box. Mostly straight elevations: they read instantly at thumbnail size.
+ */
+
+function iconTable(W) {
+  const fine = num(W * 0.55);
+  // live-edge slab (wavy top edge), trestle legs with cleats and feet, stretcher
+  const slab = 'M-106 -30C-84 -38 -58 -25 -30 -31S24 -39 52 -31S90 -25 106 -31V-18H-106Z';
+  let legs = '';
+  for (const x of [-72, 72]) legs += `M${x - 16} -18V-10H${x + 16}V-18M${x - 6} -10V66M${x + 6} -10V66M${x - 20} 66H${x + 20}V74H${x - 20}Z`;
+  const stretcher = 'M-66 26H66M-66 34H66';
+  const bowl = 'M16 -46Q40 -16 64 -46ZM34 -46Q36 -58 46 -60'; // bowl + a stem of eucalyptus
+  const grain = 'M-90 -24C-60 -27 -30 -22 0 -25S50 -27 80 -24';
+  return (
+    `<path d="${slab}"/><path d="${legs}"/><path d="${stretcher}"/><path d="${bowl}"/>` +
+    `<path d="${grain}" stroke-width="${fine}" opacity=".7"/>`
+  );
+}
+
+function iconBench(W) {
+  const fine = num(W * 0.55);
+  // thick plank seat on splayed tapered legs, pinned stretcher, end-grain rings
+  const seat = 'M-104 -22H104V-6H-104Z';
+  const legs = 'M-80 -6L-96 62H-86L-66 -6M80 -6L96 62H86L66 -6';
+  const stretcher = 'M-75 24H75M-77 32H77';
+  const wedges = 'M-100 -14H-96M96 -14H100'; // through-tenon wedges showing on the ends
+  const grain = 'M-70 -14C-40 -17 -10 -11 20 -14S60 -16 84 -13';
+  return (
+    `<g transform="translate(0 8)"><path d="${seat}"/><path d="${legs}"/><path d="${stretcher}"/>` +
+    `<path d="${wedges + grain}" stroke-width="${fine}"/></g>`
+  );
+}
+
+function iconShelves(W) {
+  const fine = num(W * 0.55);
+  // three floating shelves, staggered, with the things people put on them
+  const planks = 'M-100 -52H-4V-44H-100ZM4 -4H100V4H4ZM-84 48H12V56H-84Z';
+  const books = 'M-90 -52V-86H-81V-52M-79 -52V-80H-70V-52M-66 -52L-53 -83L-45 -80L-58 -52';
+  const plant = 'M-36 -52L-33 -68H-17L-14 -52ZM-25 -68C-33 -80 -41 -82 -45 -92M-25 -68C-21 -83 -13 -88 -7 -94M-25 -68V-94';
+  const vase = 'M28 -4C18 -16 20 -28 29 -34V-44H39V-34C48 -28 50 -16 40 -4Z';
+  const frame = 'M60 -4L66 -48H94L92 -4ZM68 -12L72 -40H88L86 -12';
+  const stack = 'M-76 48V39H-26V48M-72 39V30H-30V39';
+  const mug = 'M-12 48V30H4V48M4 34H8Q12 34 12 38Q12 43 8 43H4';
+  return (
+    `<path d="${planks}"/><path d="${books + vase + frame + stack + mug}"/>` +
+    `<path d="${plant}" stroke-width="${fine}"/>`
+  );
+}
+
+function iconBoard(W) {
+  const fine = num(W * 0.5);
+  // end-grain cutting board in three-quarter view: checkerboard top, thickness, juice groove
+  const A = [-98, -4];
+  const B = [16, -58];
+  const C = [98, -2];
+  const D = [-16, 52];
+  const T = 16; // thickness
+  const dn = (p) => [p[0], p[1] + T];
+  let d = poly([A, B, C, D]) + `M${P(A)}L${P(dn(A))}L${P(dn(D))}L${P(dn(C))}L${P(C)}M${P(D)}L${P(dn(D))}`;
+  let gridLines = '';
+  let cells = '';
+  const N = 6;
+  const at = (i, j) => lerpP(lerpP(A, B, i / N), lerpP(D, C, i / N), j / N);
+  for (let i = 1; i < N; i++) {
+    gridLines += `M${P(lerpP(A, B, i / N))}L${P(lerpP(D, C, i / N))}`;
+    gridLines += `M${P(lerpP(A, D, i / N))}L${P(lerpP(B, C, i / N))}`;
+  }
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < N; j++) if ((i + j) % 2 === 0) cells += poly([at(i, j), at(i + 1, j), at(i + 1, j + 1), at(i, j + 1)]);
+  }
+  // juice groove: an inset ring near the rim
+  const k = 0.07;
+  const groove = poly([lerpP(A, C, k), lerpP(B, D, k), lerpP(C, A, k), lerpP(D, B, k)]);
+  return (
+    `<path d="${cells}" fill="${INK}" fill-opacity=".14" stroke="none"/>` +
+    `<path d="${d}"/><path d="${gridLines}" stroke-width="${fine}" opacity=".8"/>` +
+    `<path d="${groove}" stroke-width="${fine}" stroke-dasharray="3 5"/>`
+  );
+}
+
+function iconNightstand(W) {
+  const fine = num(W * 0.55);
+  // mid-century side table: overhanging top, one drawer, open cubby, splayed tapered legs, a lamp
+  const top = 'M-66 -58H66V-46H-66Z';
+  const box = 'M-56 -46H56V26H-56ZM-56 -8H56';
+  const drawer = 'M-46 -38H46V-16H-46ZM-6 -27a6 6 0 1 0 12 0a6 6 0 1 0 -12 0';
+  const legs = 'M-50 26L-64 96H-56L-38 26M50 26L64 96H56L38 26';
+  const lamp = 'M18 -58V-64H38V-58M28 -64V-92M10 -92L17 -116H39L46 -92Z';
+  const book = 'M-44 26V14H4V26';
+  return (
+    `<g transform="translate(0 -4)"><path d="${top + box + legs + lamp}"/><path d="${drawer}"/>` +
+    `<path d="${book}" stroke-width="${fine}"/></g>`
+  );
+}
+
+/* Woodshop gallery: 640x480 shots, one piece each, framed like a studio photo. */
+/* floor = the piece's lowest point in icon units (null = wall-mounted, no floor line) */
+const WOODSHOP = [
+  { n: '01', icon: iconTable, s: 1.42, y: 246, floor: 74, what: 'live-edge slab dining table with trestle legs' },
+  { n: '02', icon: iconBench, s: 1.36, y: 244, floor: 70, what: 'plank bench with splayed legs' },
+  { n: '03', icon: iconShelves, s: 1.55, y: 238, floor: null, what: 'three floating shelves with books, a plant, a vase and a frame' },
+  { n: '04', icon: iconBoard, s: 1.46, y: 240, floor: 68, what: 'end-grain checkerboard cutting board' },
+  { n: '05', icon: iconNightstand, s: 1.24, y: 238, floor: 92, what: 'mid-century nightstand with a lamp' },
+];
+
+function woodshopShot(item, id, rnd) {
+  const W = 5.5 / Math.sqrt(item.s);
+  const bg = graphite(id, 640, 480, rnd);
+  const defs = bg.defs + scrimDefs(id) + `<radialGradient id="sp-${id}" cx=".5" cy=".42" r=".55"><stop offset="0" stop-color="#fff" stop-opacity=".07"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>`;
+  let body = bg.body + `<rect width="640" height="480" fill="url(#sp-${id})"/>`; // studio spotlight
+  if (item.floor != null) {
+    const floorY = item.y + item.floor * item.s + W * item.s * 0.5;
+    body += `<path d="M36 ${num(floorY)}H604" stroke="${DIM}" stroke-dasharray="1 6" opacity=".7"/>`;
+  }
+  body += `<g transform="translate(320 ${item.y}) scale(${item.s})"><g fill="none" stroke="${INK}" stroke-width="${num(W)}" stroke-linecap="round" stroke-linejoin="round">${item.icon(W)}</g></g>`;
+  body += scrims(id, 640, 480, 70, 96);
+  body += cropMarks(640, 480, 1, 10, 16);
+  body += `<text x="624" y="464" text-anchor="end" font-family="${FONT}" font-size="11" letter-spacing="2" fill="${NOTE}">PLACEHOLDER PHOTO</text>`;
+  return doc(640, 480, `Placeholder woodshop photo ${item.n}: ${item.what}, line drawing`, defs, body);
 }
 
 /* ============================================= icon shot compositions */
@@ -1169,6 +1292,10 @@ function buildAll() {
       out.push({ rel: `projects/${file}`, svg });
     }
   }
+  for (const item of WOODSHOP) {
+    const file = `woodshop-${item.n}.svg`;
+    out.push({ rel: `projects/${file}`, svg: woodshopShot(item, `wood${item.n}`, prng(hash(file))) });
+  }
   out.push({ rel: 'photos/levi-portrait.svg', svg: portrait() });
   for (const n of ['01', '02', '03']) out.push({ rel: `photos/passion-${n}.svg`, svg: passion(n) });
   out.push({ rel: 'photos/family-01.svg', svg: family() });
@@ -1291,7 +1418,7 @@ function main() {
   const total = sizes.reduce((a, b) => a + b.bytes, 0);
   const groups = {};
   for (const s of sizes) {
-    const key = s.rel.replace(/^(projects\/\w+)-\d+\.svg$/, '$1-01..06.svg');
+    const key = s.rel.replace(/^(projects\/\w+)-\d+\.svg$/, '$1-NN.svg');
     (groups[key] = groups[key] || []).push(s.bytes);
   }
   const kb = (b) => (b / 1024).toFixed(1) + ' KB';
