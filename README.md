@@ -14,7 +14,13 @@ Everything in `[brackets]` is placeholder copy, and the images are placeholders 
 - **A quote form that works.** Requests can go straight to Levi's phone (see *Quote requests* below). Until that's set up, the form opens the visitor's email app.
 - **Other additions:** a header with click-to-call, a checklist and a "Get a quote" button for every service, trust badges, SEO metadata and structured data, a favicon, and a 404 page.
 - **Accessibility and hosting:** motion is on by default, with a **Pause motion** button (hero corner and footer) that stops every animation and is remembered on that device. The site supports keyboard navigation throughout and prints cleanly. A small zero-dependency server makes it ready for Railway.
-- **The Woodshop.** A section under the services list for Levi's handmade furniture: a walnut-textured panel, the kinds of pieces he builds, a photo gallery, and a **Commission a piece** button that starts a quote for *Custom Furniture*.
+- **The Woodshop, its own tab.** The nav is now Services · **Woodshop** · My Story · Contact, so the furniture is always one tap away, and `/#woodshop` is a link Levi can put in an Instagram bio. The tab has:
+  - the walnut showcase with his newest piece;
+  - the rest of his pieces as cards that open the job viewer;
+  - *How a commission works*;
+  - **Commission a piece** buttons that start a *Custom Furniture* quote.
+
+  *Custom Furniture* is also listed in the services list, and its panel links to the tab. Each piece is a job tagged `furniture` in `content.js`, so it also shows under the Furniture filter in *Recent work*.
 - **Business cards.** Four seasonal designs plus a year-round Classic, print-ready PDFs, and a demo page at `/cards/` (see [Business cards](#business-cards)).
 - **Photo placeholders and before/after sliders.** Every service has six realistic placeholder photos, rendered locally with no people in them, and a **drag-to-compare before/after slider**. Each "after" is an edit of its "before", so the pair shows the same room. Every one of these images is stamped **PLACEHOLDER** in the pixels, so none can pass as Levi's work, even when saved or shared on its own. Swap in real photos as they arrive (see *When Levi's photos arrive*).
 - **Recent work.** One card per job, with filters by service. Each card opens a job viewer showing the before/after slider, the story, the client's words and every photo. A job can be shared as a link (`/#job-…`), and a phone's back gesture closes the viewer instead of leaving the site. **Jobs are the only place photos are listed**: every service's gallery and slider are gathered from the jobs tagged with it, so adding one real job updates everything (see [Adding a real job](#adding-a-real-job)). Closed service rows show a small photo, so the list scans at a glance.
@@ -182,7 +188,7 @@ Jobs live in `PROJECTS` in `public/js/content.js`, newest first. For each one:
 | His passions (3) | `public/assets/photos/passion-01…03.*`, plus captions in `index.html` → *Off the clock* |
 | His family | `public/assets/photos/family-01.*`, plus the paragraph in *Who I build for* |
 | Job photos | One entry per job in `PROJECTS` in `public/js/content.js`, with its photos in `public/assets/projects/` (see [Adding a real job](#adding-a-real-job)). For the slider, take the *before* and *after* from the same spot. |
-| Furniture he's built (5) | `public/assets/projects/woodshop-01…05.webp` + `-sm.webp`, plus the captions and `alt` text in `index.html` → *The Woodshop* |
+| Furniture he's built | Each piece is a job with `services: ['furniture']` in `PROJECTS` (see [Adding a real job](#adding-a-real-job)). The newest piece becomes the big photo on the Woodshop tab. |
 | His tattoos | Traced into line art for `public/assets/tattoo.svg` (see *Levi's tattoos* below) |
 
 Before publishing any photo:
@@ -219,7 +225,7 @@ The seasonal outfits belong to the placeholder illustration, so they won't carry
 - [ ] Email: find and replace `levi@example.com` in the same two files.
 - [ ] Update the JSON-LD block in the `<head>` of `index.html`: phone, email, area served.
 - [ ] Set `QUOTE_WEBHOOK_URL` on Railway.
-- [ ] Woodshop: confirm the kinds of pieces he builds, the woods, and the lead time (`index.html` → *The Woodshop*).
+- [ ] Woodshop: confirm the kinds of pieces he builds, the woods, the lead time and the deposit (`index.html` → the Woodshop panel).
 - [ ] Business cards: fill in `public/cards/cards.js` and re-export (see [Business cards](#business-cards)).
 
 ---

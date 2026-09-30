@@ -46,7 +46,8 @@ function itemHTML(s) {
         <div class="thumbs">${thumbs}</div>
         <div class="svc__actions">
           <button class="cta cta--sm" type="button" data-quote="${s.id}">Get a quote<span class="vh"> for ${title}</span></button>
-          ${s.jobs ? `<a class="svc__jobs" href="#work" data-jobs-filter="${s.id}">See ${s.jobs > 1 ? `${s.jobs} jobs` : 'the job'}<span class="vh"> for ${title}</span> in Recent work</a>` : ''}
+          ${s.more ? `<a class="svc__jobs" href="#${s.more.tab}" data-goto-tab="${s.more.tab}">${esc(s.more.label)}</a>`
+    : s.jobs ? `<a class="svc__jobs" href="#work" data-jobs-filter="${s.id}">See ${s.jobs > 1 ? `${s.jobs} jobs` : 'the job'}<span class="vh"> for ${title}</span> in Recent work</a>` : ''}
         </div>
       </div></div>
     </div>

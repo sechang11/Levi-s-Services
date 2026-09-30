@@ -66,6 +66,14 @@ export const SERVICES = [
     desc: "Clear Path keeps your place moving all winter. Levi clears driveways edge to edge and opens up every path to your door — walkways, front steps and sidewalks — so you're never stuck digging out.",
     points: ['Driveways cleared edge to edge', 'Walkways & paths to every door', 'Front steps & sidewalks', '[Per-storm or season-long plans — confirm details]'],
   },
+  {
+    id: 'furniture',
+    title: 'Custom Furniture',
+    tag: 'Woodshop',
+    desc: "Solid-wood furniture built by hand in Levi's shop — dining tables, benches, shelves and one-off pieces, sized for your space and made to last.",
+    points: ['Dining tables & benches', 'Floating shelves & built-ins', 'Cutting boards & gifts', '[Walnut · white oak · maple · reclaimed]'],
+    more: { tab: 'woodshop', label: 'Visit the Woodshop' }, // its own tab has the full showcase
+  },
 ];
 
 export const serviceById = (id) => SERVICES.find((s) => s.id === id);
@@ -122,11 +130,21 @@ export const PROJECTS = [
   sample('flooring', 'New flooring'),
   sample('framing', 'Basement framing'),
   sample('demolition', 'Kitchen tear-out'),
-  sample('furniture', 'Walnut dining table', {
-    photos: [{ file: 'woodshop-01', label: 'Finished table' }, { file: 'woodshop-04', label: 'Cutting board from the offcuts' }],
+  // Woodshop pieces: each commission is a job too (they fill the Woodshop tab)
+  ...[
+    ['table', 'Walnut dining table', 'woodshop-01'],
+    ['bench', 'White oak entry bench', 'woodshop-02'],
+    ['shelves', 'Floating walnut shelves', 'woodshop-03'],
+    ['board', 'End-grain cutting board', 'woodshop-04'],
+    ['nightstand', 'Walnut nightstand', 'woodshop-05'],
+  ].map(([key, title, file]) => sample('furniture', title, {
+    id: `sample-${key}`,
+    length: '[Build time]',
+    summary: '[The piece, the wood, the size, and what the client wanted it for.]',
+    photos: [{ file, label: 'Finished piece' }],
     before: null,
     after: null,
-  }),
+  })),
 ];
 
 const asset = (file, size = '') => `assets/projects/${file}${size}.webp`;
@@ -152,13 +170,8 @@ for (const s of SERVICES) {
   s.compare = pair ? [pair.photos[pair.before], pair.photos[pair.after]] : null;
 }
 
-/* The Woodshop: Levi's handmade furniture (the section under the services
-   list — its photos live in index.html). Not an accordion service, but it is a
-   quote topic, so "Commission a piece" pre-selects it in the form. */
-export const WOODSHOP = { id: 'furniture', title: 'Custom Furniture' };
-
-/* What the quote form's "Service" menu offers, in order. */
-export const QUOTE_TOPICS = [...SERVICES, WOODSHOP];
+/* What the quote form's "Service" menu (and the business cards) list, in order. */
+export const QUOTE_TOPICS = SERVICES;
 export const topicById = (id) => QUOTE_TOPICS.find((s) => s.id === id);
 
 /* Four seasonal themes. Colors live in seasons.css; this is the messaging.

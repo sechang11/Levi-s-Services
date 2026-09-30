@@ -647,6 +647,10 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
   .svc__actions{ grid-column:1; grid-row:3; }
   .svc__body > .ba{ grid-column:2; grid-row:1 / 5; }
   .svc__body > .thumbs{ grid-column:1 / -1; grid-row:5; }
+  /* no before/after pair (e.g. furniture): one column, in reading order */
+  .svc__body:not(:has(> .ba)){ grid-template-columns:1fr; grid-template-rows:none; }
+  .svc__body:not(:has(> .ba)) > *{ grid-column:auto; grid-row:auto; }
+  .svc__body:not(:has(> .ba)) > .svc__points{ grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); }
 }
 
 /* before/after slider: "before" on top, clipped to --pos; a transparent range input drives it */
@@ -870,7 +874,6 @@ html:has(.job[open]){ overflow:hidden; }
    ===================================================================== */
 .woodshop{
   position:relative; isolation:isolate; overflow:hidden;
-  margin-top:calc(var(--space)*5);
   display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:clamp(20px,3.5vw,44px); align-items:center;
   padding:clamp(22px,3.6vw,44px);
   border-radius:var(--radius);
@@ -909,28 +912,16 @@ html:has(.job[open]){ overflow:hidden; }
 .woodshop__call{ color:var(--muted); font-size:.92rem; text-decoration:none; }
 .woodshop__call:hover{ color:var(--text); text-decoration:underline; text-decoration-color:var(--accent-2); }
 
-/* bento: the hero piece takes a 2×2 block, four pieces around it */
-.woodshop__gallery{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
-.woodshop__shot{
-  position:relative; display:block; margin:0; padding:0; border:0; overflow:hidden; cursor:zoom-in;
-  border-radius:var(--radius-sm); aspect-ratio:16/9;   /* = the photos, so the PLACEHOLDER stamp never crops */
-  background:var(--surface-deep); color:inherit; font:inherit;
-  box-shadow:inset 0 0 0 1px var(--hairline);
-  transition:box-shadow .2s;
+/* the newest piece, big, beside the copy (projects.js; opens the job viewer) */
+.woodshop__feature{
+  position:relative; display:block; width:100%; margin:0; padding:0; border:0; overflow:hidden; cursor:pointer;
+  border-radius:var(--radius); background:var(--surface-deep); color:inherit; font:inherit;
+  box-shadow:0 18px 40px -20px rgba(0,0,0,.9), 0 0 0 1px var(--hairline-metal);
 }
-.woodshop__shot:first-child{ grid-column:span 2; grid-row:span 2; aspect-ratio:auto; }
-.woodshop__shot img{ width:100%; height:100%; object-fit:cover; transition:transform .3s var(--ease); }
-.woodshop__shot:hover img,.woodshop__shot:focus-visible img{ transform:scale(1.04); }
-.woodshop__shot:hover,.woodshop__shot:focus-visible{ box-shadow:4px 4px 0 var(--accent); }
-.woodshop__shot:hover .thumb__zoom,.woodshop__shot:focus-visible .thumb__zoom{ opacity:1; }
-@media (hover:none){ .woodshop__shot .thumb__zoom{ opacity:1; } }
-.woodshop__shot:not(:first-child) .thumb__cap{ left:6px; bottom:6px; }
+.woodshop__feature img{ width:100%; height:auto; aspect-ratio:16 / 9; object-fit:cover; transition:transform .4s var(--ease); }
+.woodshop__feature:hover img,.woodshop__feature:focus-visible img{ transform:scale(1.03); }
 @media (max-width:980px){
   .woodshop{ grid-template-columns:1fr; }
-}
-@media (max-width:560px){
-  .woodshop__gallery{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .woodshop__shot:first-child{ grid-row:auto; aspect-ratio:16/9; }
 }
 
 /* =====================================================================
@@ -1283,6 +1274,9 @@ body.lb-open{ overflow:hidden; }
   .tabbar__tabs{ gap:0; }
   .tab{ flex:1; padding-inline:4px; }
   .tabbar__call{ width:42px; padding:0; justify-content:center; }
+  /* four tabs need the whole bar on a phone; Call lives in the header, the hero and the bottom action bar */
+  .tabbar__call{ display:none; }
+  .tab{ letter-spacing:.03em; }
   .field-row{ grid-template-columns:1fr; }
   .hero__actions{ width:100%; }
   .hero__actions .cta{ flex:1 1 220px; }
@@ -1331,7 +1325,7 @@ html[data-motion="off"] .season-fx{ display:none; }
   body{ background:#fff; color:#111; }
   body::before,body::after,.concrete,.season-fx,.hero__photo,.hero__light,.hero__ink,.hero__sun,.hero-ground,
   .topbar .season-switch,.tabbar,.head-stage,.head-hint,.season-chip,.cta,.lightbox,.thumb::before,.svc__toggle,
-  .motion-toggle,.footer__motion,.woodshop::before,.woodshop::after,.woodshop__gallery,.actionbar,.ba,.closer__actions,
+  .motion-toggle,.footer__motion,.woodshop::before,.woodshop::after,.woodshop__feature-slot,.actionbar,.ba,.closer__actions,
   .svc__peek,.jobs__filters,.jobs__more,.job{ display:none !important; }
   .woodshop{ background:none; box-shadow:none; padding:0; }
   .hero__headline,.svc-title{ -webkit-text-fill-color:#111 !important; color:#111 !important; background:none !important; filter:none !important; }

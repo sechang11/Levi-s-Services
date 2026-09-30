@@ -36,18 +36,20 @@ document.querySelector('[data-season-chip]')?.addEventListener('click', async (e
 document.querySelectorAll('[data-quote-featured]').forEach((b) => b.addEventListener('click', () => {
   goToQuote(SEASONS[currentSeason()].featured);
 }));
-// the Woodshop's "Commission a piece" starts a Custom Furniture quote
-document.querySelector('.woodshop [data-quote]')?.addEventListener('click', (e) => {
-  goToQuote(e.currentTarget.dataset.quote);
-});
+// the Woodshop tab's "Commission a piece" buttons start a Custom Furniture quote
+document.querySelectorAll('#panel-woodshop [data-quote]').forEach((b) => b.addEventListener('click', () => {
+  goToQuote(b.dataset.quote);
+}));
 
 document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = String(new Date().getFullYear()); });
 
-/* Deep links: #services · #story · #contact open that tab, #<service> (e.g. #snow,
-   for a snow-season flyer) opens that service, #woodshop jumps to the furniture.
+/* Deep links: #services · #woodshop · #story · #contact open that tab, #<service>
+   (e.g. #snow, for a snow-season flyer) opens that service, #work jumps to Recent
+   work, #job-<id> opens a job.
    Back/Forward replay them (tabs.js pushes a step per tab switch). */
 function route(initial = false) {
-  if (syncJobFromHash()) { showTab('services', { history: 'none' }); return; } // #job-<id> opens the job viewer
+  const job = syncJobFromHash(); // #job-<id> opens the job viewer, over the tab it belongs to
+  if (job) { showTab(job.services.every((s) => s === 'furniture') ? 'woodshop' : 'services', { history: 'none' }); return; }
   let hash = '';
   try { hash = decodeURIComponent(location.hash.slice(1)); } catch { /* malformed %-escape: treat as no hash */ }
   const tab = tabFromHash();
@@ -58,8 +60,6 @@ function route(initial = false) {
     showTab('services', { history: 'none' }).then(() => openService(hash, { scroll: true }));
   } else if (hash === 'work') {
     showTab('services', { history: 'none' }).then(() => { if (initial) document.getElementById('work')?.scrollIntoView({ block: 'start' }); });
-  } else if (hash === 'woodshop' || hash === 'furniture') {
-    showTab('services', { history: 'none' }).then(() => document.getElementById('woodshop')?.scrollIntoView({ block: 'start' }));
   } else if (!hash && !initial) {
     showTab('services', { history: 'none' });
   }

@@ -55,7 +55,7 @@ export function filterJobs(id) {
 /** Open the job viewer. push=false when the address bar already says #job-<id>. */
 export function openJob(id, { push = true, trigger = null } = {}) {
   const p = projectById(id);
-  if (!p || !dialog) return false;
+  if (!p || !dialog) return null;
   returnFocus = trigger || document.activeElement;
   const pair = p.before != null && p.after != null;
   body.innerHTML = `
@@ -78,7 +78,7 @@ export function openJob(id, { push = true, trigger = null } = {}) {
       ${p.photos.map((ph, i) => `<figure class="job__shot"><img src="${esc(ph.src)}" alt="${esc(ph.alt)}" width="1280" height="720" loading="${i ? 'lazy' : 'eager'}" decoding="async" /><figcaption>${String(i + 1).padStart(2, '0')} · ${esc(ph.label)}</figcaption></figure>`).join('')}
     </div>
     <div class="job__actions">
-      <button class="cta" type="button" data-job-quote="${esc(p.services[0])}">Get a quote for a job like this</button>
+      <button class="cta" type="button" data-job-quote="${esc(p.services[0])}">${p.services[0] === 'furniture' ? 'Commission a piece like this' : 'Get a quote for a job like this'}</button>
       <button class="cta cta--ghost" type="button" data-job-close>Back to all jobs</button>
     </div>`;
   if (!dialog.open) dialog.showModal();
@@ -87,7 +87,7 @@ export function openJob(id, { push = true, trigger = null } = {}) {
   watchBA(body);
   openId = id;
   if (push && location.hash !== `#job-${id}`) history.pushState({ job: id }, '', `#job-${id}`);
-  return true;
+  return p;
 }
 
 /* Close and tidy up right here (not in the dialog's "close" event, which browsers
@@ -105,14 +105,37 @@ function closeJob(mode = 'back') {
   if (mode === 'back' && returnFocus && document.contains(returnFocus)) returnFocus.focus({ preventScroll: true });
 }
 
-/** Keep the viewer in step with the address bar (Back/Forward, shared links). */
+/** Keep the viewer in step with the address bar (Back/Forward, shared links).
+    Returns the job it opened, if the address names one. */
 export function syncJobFromHash() {
   const m = /^#job-(.+)$/.exec(location.hash);
   let id = null;
   try { id = m ? decodeURIComponent(m[1]) : null; } catch { /* malformed */ }
   if (id && projectById(id)) return openJob(id, { push: false });
   if (openId) { openId = null; closeJob(); } // Back pressed while a job was open
-  return false;
+  return null;
+}
+
+/* The Woodshop tab: the newest piece up top, the rest as cards (furniture jobs). */
+function renderWoodshop() {
+  const pieces = PROJECTS.filter((p) => p.services.includes('furniture'));
+  const gridEl = document.querySelector('[data-woodshop-grid]');
+  if (gridEl) {
+    gridEl.innerHTML = pieces.slice(1).map(cardHTML).join('');
+    gridEl.closest('section').hidden = pieces.length < 2; // just one piece so far: the feature is enough
+  }
+  const note = document.querySelector('[data-woodshop-sample]');
+  if (note) note.hidden = !pieces.some((p) => p.sample);
+  const feature = document.querySelector('[data-woodshop-feature]');
+  const top = pieces[0];
+  if (feature && top) {
+    const ph = top.photos[top.after ?? 0] || top.photos[0];
+    feature.innerHTML = `
+      <button class="woodshop__feature" type="button" data-job="${esc(top.id)}">
+        <img src="${esc(ph.src)}" alt="${esc(ph.alt)}" width="1280" height="720" decoding="async" />
+        <span class="thumb__cap">Latest · ${esc(top.title)}</span>
+      </button>`;
+  }
 }
 
 function stepStrip(dir) {
@@ -151,10 +174,12 @@ export function initProjects() {
     if (b) filterJobs(b.dataset.filter);
   });
   more.addEventListener('click', () => { expanded = true; applyFilter(); });
-  grid.addEventListener('click', (e) => {
+  // any job card or feature (Recent work, the Woodshop tab) opens the viewer
+  document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-job]');
     if (b) openJob(b.dataset.job, { trigger: b });
   });
+  renderWoodshop();
   // "See the jobs" links in the service panels: filter first, then the link jumps to #work
   document.addEventListener('click', (e) => {
     const a = e.target.closest('[data-jobs-filter]');

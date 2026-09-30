@@ -1,9 +1,9 @@
 /* tabs.js — WAI-ARIA tabs (roving tabindex) with a sliding underline and a
    View Transitions cross-fade between panels. The address bar follows along:
-   #services · #story · #contact are shareable links, and Back/Forward step
+   #services · #woodshop · #story · #contact are shareable links, and Back/Forward step
    between tabs (main.js routes them, plus service deep links like #snow). */
 import { reduceMotion } from './motion.js';
-export const TAB_IDS = ['services', 'story', 'contact'];
+export const TAB_IDS = ['services', 'woodshop', 'story', 'contact'];
 /** The tab a URL hash names (#story, or the older #panel-story), else null. */
 export const tabFromHash = (hash = location.hash) => {
   const id = hash.replace(/^#(panel-)?/, '');

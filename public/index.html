@@ -426,6 +426,7 @@
     <div class="tabbar__inner">
       <div class="tabbar__tabs" role="tablist" aria-label="Site sections">
         <button class="tab is-active" role="tab" id="tab-services" aria-controls="panel-services" aria-selected="true"><span class="tab__label">Services</span></button>
+        <button class="tab" role="tab" id="tab-woodshop" aria-controls="panel-woodshop" aria-selected="false" tabindex="-1"><span class="tab__label">Woodshop</span></button>
         <button class="tab" role="tab" id="tab-story" aria-controls="panel-story" aria-selected="false" tabindex="-1"><span class="tab__label">My Story</span></button>
         <button class="tab" role="tab" id="tab-contact" aria-controls="panel-contact" aria-selected="false" tabindex="-1"><span class="tab__label">Contact</span></button>
         <span class="tab__underline" aria-hidden="true"></span>
@@ -451,6 +452,7 @@
           <li><strong>Demolition</strong> · <strong>Framing &amp; Carpentry</strong> · <strong>Drywall &amp; Paint</strong></li>
           <li><strong>Decks &amp; Fencing</strong> · <strong>Flooring &amp; Tile</strong> · <strong>Kitchen &amp; Bath</strong></li>
           <li><strong>Roofing &amp; Gutters</strong> · <strong>Concrete &amp; Masonry</strong></li>
+          <li><strong>Custom Furniture</strong> — handmade tables, benches, shelves &amp; more from the Woodshop</li>
           <li>Call or text <a href="tel:+15555550142">(555) 555-0142</a> for a free quote.</li>
         </ul>
       </noscript>
@@ -501,8 +503,24 @@
         <ul class="season-list__items" data-season-checklist></ul>
       </section>
 
-      <!-- ===== THE WOODSHOP — swap the placeholder photos in assets/projects/woodshop-0N(.webp + -sm.webp) ===== -->
-      <section class="woodshop" id="woodshop" aria-labelledby="h-woodshop">
+      <!-- ===== CLOSING CALL TO ACTION ===== -->
+      <section class="closer" aria-labelledby="h-closer">
+        <div class="closer__copy">
+          <h2 class="closer__title" id="h-closer">Got a project in mind?</h2>
+          <p>Text a photo of the job, call, or send the form. The quote is free.</p>
+          <p class="closer__area"><svg aria-hidden="true"><use href="#i-pin" /></svg><span>Serving <strong>[Your City]</strong> and about [30] miles around: [Town] · [Town] · [Town] · [Town]</span></p>
+        </div>
+        <div class="closer__actions">
+          <button class="cta" type="button" data-goto-tab="contact">Get a free quote</button>
+          <a class="cta cta--ghost" href="sms:+15555550142"><svg aria-hidden="true"><use href="#i-chat" /></svg>Text a photo</a>
+          <a class="cta cta--ghost" href="tel:+15555550142"><svg aria-hidden="true"><use href="#i-phone" /></svg>Call</a>
+        </div>
+      </section>
+    </section>
+
+    <!-- ===== THE WOODSHOP — the pieces are the furniture jobs in js/content.js ===== -->
+    <section class="panel" id="panel-woodshop" role="tabpanel" aria-labelledby="tab-woodshop" tabindex="0" hidden>
+      <section class="woodshop" aria-labelledby="h-woodshop">
         <div class="woodshop__copy">
           <p class="kicker"><svg aria-hidden="true"><use href="#i-chair" /></svg>The Woodshop</p>
           <h2 class="woodshop__title" id="h-woodshop">Handmade furniture</h2>
@@ -518,49 +536,52 @@
           <p class="woodshop__note">[Walnut · white oak · maple · reclaimed] — [lead time 3–6 weeks]</p>
           <div class="woodshop__actions">
             <button class="cta cta--sm" type="button" data-quote="furniture">Commission a piece</button>
-            <a class="woodshop__call" href="tel:+15555550142">or call (555) 555-0142</a>
+            <a class="woodshop__call" href="sms:+15555550142">or text a photo of your space</a>
           </div>
         </div>
-
-        <div class="woodshop__gallery">
-          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-full="assets/projects/woodshop-01.webp" data-cap="Live-edge dining table · [wood, size]" aria-label="Open photo 1 of 5: live-edge dining table">
-            <img src="assets/projects/woodshop-01.webp" alt="Walnut dining table with black steel trestle legs (placeholder photo)" width="1280" height="720" loading="lazy" decoding="async" />
-            <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
-            <span class="thumb__cap">Dining table</span>
-          </button>
-          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-full="assets/projects/woodshop-02.webp" data-cap="White oak bench · [wood, size]" aria-label="Open photo 2 of 5: white oak bench">
-            <img src="assets/projects/woodshop-02-sm.webp" alt="White oak entryway bench with splayed legs (placeholder photo)" width="640" height="360" loading="lazy" decoding="async" />
-            <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
-            <span class="thumb__cap">Bench</span>
-          </button>
-          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-full="assets/projects/woodshop-03.webp" data-cap="Floating shelves · [wood, size]" aria-label="Open photo 3 of 5: floating shelves">
-            <img src="assets/projects/woodshop-03-sm.webp" alt="Three floating walnut shelves with books and a vase (placeholder photo)" width="640" height="360" loading="lazy" decoding="async" />
-            <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
-            <span class="thumb__cap">Shelves</span>
-          </button>
-          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-full="assets/projects/woodshop-04.webp" data-cap="End-grain cutting board · [wood, size]" aria-label="Open photo 4 of 5: end-grain cutting board">
-            <img src="assets/projects/woodshop-04-sm.webp" alt="End-grain checkerboard cutting board in maple and walnut (placeholder photo)" width="640" height="360" loading="lazy" decoding="async" />
-            <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
-            <span class="thumb__cap">Cutting board</span>
-          </button>
-          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-full="assets/projects/woodshop-05.webp" data-cap="Nightstand · [wood, size]" aria-label="Open photo 5 of 5: nightstand">
-            <img src="assets/projects/woodshop-05-sm.webp" alt="Mid-century walnut nightstand with one drawer (placeholder photo)" width="640" height="360" loading="lazy" decoding="async" />
-            <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
-            <span class="thumb__cap">Nightstand</span>
-          </button>
-        </div>
+        <div class="woodshop__feature-slot" data-woodshop-feature></div>
       </section>
-      <!-- ===== CLOSING CALL TO ACTION ===== -->
-      <section class="closer" aria-labelledby="h-closer">
+
+      <section class="jobs" aria-labelledby="h-pieces">
+        <p class="kicker"><svg aria-hidden="true"><use href="#i-chair" /></svg>From the shop</p>
+        <h2 class="jobs__title" id="h-pieces">Pieces</h2>
+        <p class="jobs__lead">Tap a piece for more photos and the story behind it. <span class="jobs__sample" data-woodshop-sample>These are placeholder pieces until Levi's real ones go in.</span></p>
+        <ul class="jobs__grid" data-woodshop-grid></ul>
+      </section>
+
+      <section class="steps" aria-labelledby="h-commission">
+        <p class="kicker">How a commission works</p>
+        <h2 class="steps__title" id="h-commission">From sketch to your house</h2>
+        <ol class="steps__list">
+          <li class="step">
+            <span class="step__num" aria-hidden="true">01</span>
+            <svg class="step__icon" aria-hidden="true"><use href="#i-chat" /></svg>
+            <h3>Tell me what you're picturing</h3>
+            <p>The piece, the room it's for, a rough size and the wood you like. A photo of the space or a quick sketch helps.</p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">02</span>
+            <svg class="step__icon" aria-hidden="true"><use href="#i-clipboard" /></svg>
+            <h3>A sketch and one fixed price</h3>
+            <p>I send a simple drawing and a price you can count on[, with a deposit to start].</p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">03</span>
+            <svg class="step__icon" aria-hidden="true"><use href="#i-chair" /></svg>
+            <h3>Built by hand, start to finish</h3>
+            <p>[3–6 weeks] in the shop, with progress photos along the way, then delivery or pickup.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="closer" aria-labelledby="h-closer-wood">
         <div class="closer__copy">
-          <h2 class="closer__title" id="h-closer">Got a project in mind?</h2>
-          <p>Text a photo of the job, call, or send the form. The quote is free.</p>
-          <p class="closer__area"><svg aria-hidden="true"><use href="#i-pin" /></svg><span>Serving <strong>[Your City]</strong> and about [30] miles around: [Town] · [Town] · [Town] · [Town]</span></p>
+          <h2 class="closer__title" id="h-closer-wood">Have a piece in mind?</h2>
+          <p>Send a photo of the space and a rough size. The quote is free.</p>
         </div>
         <div class="closer__actions">
-          <button class="cta" type="button" data-goto-tab="contact">Get a free quote</button>
+          <button class="cta" type="button" data-quote="furniture">Commission a piece</button>
           <a class="cta cta--ghost" href="sms:+15555550142"><svg aria-hidden="true"><use href="#i-chat" /></svg>Text a photo</a>
-          <a class="cta cta--ghost" href="tel:+15555550142"><svg aria-hidden="true"><use href="#i-phone" /></svg>Call</a>
         </div>
       </section>
     </section>
@@ -820,6 +841,7 @@
       </div>
       <nav class="footer__links" aria-label="Footer">
         <a href="#services" data-goto-tab="services">Services</a>
+        <a href="#woodshop" data-goto-tab="woodshop">Woodshop</a>
         <a href="#story" data-goto-tab="story">My Story</a>
         <a href="#contact" data-goto-tab="contact">Free quote</a>
       </nav>
