@@ -47,6 +47,7 @@ const TYPES = {
 };
 const COMPRESSIBLE = new Set(['.html', '.css', '.js', '.mjs', '.json', '.webmanifest', '.svg', '.txt', '.xml']);
 const ALWAYS_REVALIDATE = new Set(['.html', '.css', '.js', '.mjs', '.json', '.webmanifest']);
+const TEMPLATED = new Set(['.html', '.xml', '.txt']); // may carry {{ORIGIN}}
 
 const CSP = [
   "default-src 'self'",
@@ -83,7 +84,7 @@ async function getFile(abs) {
   const raw = await fsp.readFile(abs);
   const ext = path.extname(abs).toLowerCase();
   const entry = compress({ key, ext, type: TYPES[ext] || 'application/octet-stream', raw, br: null, gz: null, etag: `W/"${key}"` });
-  entry.templated = ext === '.html' && raw.includes('{{ORIGIN}}');
+  entry.templated = TEMPLATED.has(ext) && raw.includes('{{ORIGIN}}'); // pages, sitemap.xml, robots.txt
   cache.set(abs, entry);
   return entry;
 }

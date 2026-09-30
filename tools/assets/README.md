@@ -4,7 +4,7 @@ The seasonal hero backdrops, particle sprites, share card and app icons in `publ
 
 | Model | Used for | License |
 |---|---|---|
-| **Z-Image Turbo** (`z_image_turbo_bf16`, text encoder `qwen_3_4b`, VAE `ae`) | backdrops + sprites | Apache-2.0: commercial use OK |
+| **Z-Image Turbo** (`z_image_turbo_bf16`, text encoder `qwen_3_4b`, VAE `ae`) | backdrops, sprites, placeholder job photos | Apache-2.0: commercial use OK |
 | **BiRefNet** (ComfyUI `RemoveBackground`) | sprite and portrait cut-outs | MIT |
 | **Qwen-Image-Edit 2511** (`qwen_image_edit_2511_fp8mixed`, text encoder `qwen_2.5_vl_7b`, VAE `qwen_image_vae`) + the **Lightning** 4-step LoRA | business-card art: restages Levi from a reference image | Apache-2.0 |
 
@@ -75,4 +75,25 @@ Copy `out/cards/*` to `public/cards/art/` and `out/woodshop/*` to `public/assets
 4. His **tattoo photos** can become line art for the site's etched background (`public/assets/tattoo.svg`). Trace them into clean black strokes rather than using AI renders, so the art is really his.
 
 Keep these renders on the cards and in the hero. They're illustrations of the kind of work he does, not photos of his jobs.
+
+## Placeholder job photos
+
+The service galleries, the before/after sliders and the Woodshop show realistic **placeholder** photos until Levi's own arrive. There are six per service and five furniture pieces, 59 in all.
+
+- **No people** appear in any of them, so a stranger can't be mistaken for Levi.
+- **Every file is stamped PLACEHOLDER** in the pixels.
+
+```bash
+python3 make_placeholder_jobs.py a.json            # 50 Z-Image renders: every shot except the "after"s (~3 min)
+python3 comfy_run.py a.json
+python3 make_placeholder_jobs.py b.json --after    # 9 Qwen-Image-Edit "after"s, each edited from its "before" (~10 min)
+python3 comfy_run.py b.json
+~/ComfyUI/venv/bin/python process_placeholders.py  # → out/projects/{id}-0N.webp + -sm.webp, labeled
+```
+
+Copy `out/projects/*` to `public/assets/projects/`.
+
+- **Re-roll individual shots** with `--only decks_detail,kitchen_before --seed 23`. If a *before* changes, run `--after --only <service>_after` too, so the pair still matches.
+- **Keep camera words out of prompts.** Phrases like "full-frame camera, 24-70mm lens" put actual cameras into the scenes. The style line says "no cameras" for that reason.
+- **Real photos** replace these through [`process_photos.py`](process_photos.py), which writes the same two sizes and strips GPS and other metadata.
 

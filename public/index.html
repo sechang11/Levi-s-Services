@@ -89,6 +89,8 @@
     <symbol id="i-heart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M12 20.3s-7.3-4.5-7.3-10.3A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.3 2.8c0 5.8-7.3 10.3-7.3 10.3z"/></symbol>
     <symbol id="i-hammer" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m13.5 8.5-9 9a1.8 1.8 0 0 0 2.5 2.5l9-9"/><path d="m11.5 6.5 3-3 6 6-3 3"/><path d="M14.5 3.5 17 2l3 3-1.5 2.5"/></g></symbol>
     <symbol id="i-chair" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18M7 12.5h10.5V21M7 17h10.5"/><path d="M7 5.5h3M7 9h3"/></g></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.6 3.8V16h0A2.4 2.4 0 0 1 4 13.5z"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4.5" width="14" height="16.5" rx="2.2"/><path d="M9 4.5v-.8C9 3 9.4 2.5 10 2.5h4c.6 0 1 .5 1 1.2v.8"/><path d="m8.8 13.2 2.2 2.2 4.2-4.6"/></g></symbol>
     <symbol id="i-pause" viewBox="0 0 24 24"><g fill="currentColor"><rect x="6" y="4.5" width="4.2" height="15" rx="1.3"/><rect x="13.8" y="4.5" width="4.2" height="15" rx="1.3"/></g></symbol>
     <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M7.2 5.1v13.8a1.1 1.1 0 0 0 1.7.9l10.4-6.9a1.1 1.1 0 0 0 0-1.8L8.9 4.2a1.1 1.1 0 0 0-1.7.9z"/></symbol>
   </svg>
@@ -355,7 +357,7 @@
 
     <h1 class="hero__headline">LEVI<span class="hero__amp">·</span>BUILDS</h1>
 
-    <a class="season-chip" href="#panel-services" data-season-chip>
+    <a class="season-chip" href="#services" data-season-chip>
       <svg aria-hidden="true"><use data-season-icon href="#i-fall" /></svg>
       <span data-season-chip-text>Beat the freeze — roofs &amp; gutters before first snow</span>
       <svg class="season-chip__arrow" aria-hidden="true"><use href="#i-arrow" /></svg>
@@ -453,8 +455,34 @@
         </ul>
       </noscript>
 
-      <!-- ===== THE WOODSHOP — swap the placeholder photos in assets/projects/woodshop-0N ===== -->
-      <section class="woodshop" aria-labelledby="h-woodshop">
+      <!-- ===== HOW IT WORKS ===== -->
+      <section class="steps" aria-labelledby="h-steps">
+        <p class="kicker">How it works</p>
+        <h2 class="steps__title" id="h-steps">Three steps, no surprises</h2>
+        <ol class="steps__list">
+          <li class="step">
+            <span class="step__num" aria-hidden="true">01</span>
+            <svg class="step__icon" aria-hidden="true"><use href="#i-chat" /></svg>
+            <h3>Tell me about the job</h3>
+            <p>Call, text or send the form. A photo or two of the space helps me quote faster.</p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">02</span>
+            <svg class="step__icon" aria-hidden="true"><use href="#i-clipboard" /></svg>
+            <h3>Get a free written quote</h3>
+            <p>I come out, measure and walk it with you, then send one clear price, usually within [2 business days].</p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">03</span>
+            <svg class="step__icon" aria-hidden="true"><use href="#i-hammer" /></svg>
+            <h3>Built right, cleaned up</h3>
+            <p>Work starts on the date we agree. The site is cleaned up every day, and we walk the finished job together.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- ===== THE WOODSHOP — swap the placeholder photos in assets/projects/woodshop-0N(.webp + -sm.webp) ===== -->
+      <section class="woodshop" id="woodshop" aria-labelledby="h-woodshop">
         <div class="woodshop__copy">
           <p class="kicker"><svg aria-hidden="true"><use href="#i-chair" /></svg>The Woodshop</p>
           <h2 class="woodshop__title" id="h-woodshop">Handmade furniture</h2>
@@ -475,31 +503,43 @@
         </div>
 
         <div class="woodshop__gallery">
-          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-cap="Live-edge dining table · [wood, size]" aria-label="Open photo 1 of 5: live-edge dining table">
-            <img src="assets/projects/woodshop-01.svg" alt="Live-edge dining table with trestle legs (placeholder photo)" width="640" height="480" loading="lazy" decoding="async" />
+          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-full="assets/projects/woodshop-01.webp" data-cap="Live-edge dining table · [wood, size]" aria-label="Open photo 1 of 5: live-edge dining table">
+            <img src="assets/projects/woodshop-01.webp" alt="Walnut dining table with black steel trestle legs (placeholder photo)" width="1280" height="720" loading="lazy" decoding="async" />
             <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
             <span class="thumb__cap">Dining table</span>
           </button>
-          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-cap="Plank bench · [wood, size]" aria-label="Open photo 2 of 5: plank bench">
-            <img src="assets/projects/woodshop-02.svg" alt="Plank bench with splayed legs (placeholder photo)" width="640" height="480" loading="lazy" decoding="async" />
+          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-full="assets/projects/woodshop-02.webp" data-cap="White oak bench · [wood, size]" aria-label="Open photo 2 of 5: white oak bench">
+            <img src="assets/projects/woodshop-02-sm.webp" alt="White oak entryway bench with splayed legs (placeholder photo)" width="640" height="360" loading="lazy" decoding="async" />
             <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
             <span class="thumb__cap">Bench</span>
           </button>
-          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-cap="Floating shelves · [wood, size]" aria-label="Open photo 3 of 5: floating shelves">
-            <img src="assets/projects/woodshop-03.svg" alt="Three floating shelves (placeholder photo)" width="640" height="480" loading="lazy" decoding="async" />
+          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-full="assets/projects/woodshop-03.webp" data-cap="Floating shelves · [wood, size]" aria-label="Open photo 3 of 5: floating shelves">
+            <img src="assets/projects/woodshop-03-sm.webp" alt="Three floating walnut shelves with books and a vase (placeholder photo)" width="640" height="360" loading="lazy" decoding="async" />
             <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
             <span class="thumb__cap">Shelves</span>
           </button>
-          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-cap="End-grain cutting board · [wood, size]" aria-label="Open photo 4 of 5: end-grain cutting board">
-            <img src="assets/projects/woodshop-04.svg" alt="End-grain checkerboard cutting board (placeholder photo)" width="640" height="480" loading="lazy" decoding="async" />
+          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-full="assets/projects/woodshop-04.webp" data-cap="End-grain cutting board · [wood, size]" aria-label="Open photo 4 of 5: end-grain cutting board">
+            <img src="assets/projects/woodshop-04-sm.webp" alt="End-grain checkerboard cutting board in maple and walnut (placeholder photo)" width="640" height="360" loading="lazy" decoding="async" />
             <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
             <span class="thumb__cap">Cutting board</span>
           </button>
-          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-cap="Nightstand · [wood, size]" aria-label="Open photo 5 of 5: nightstand">
-            <img src="assets/projects/woodshop-05.svg" alt="Mid-century nightstand with one drawer (placeholder photo)" width="640" height="480" loading="lazy" decoding="async" />
+          <button class="woodshop__shot" type="button" data-lightbox data-gallery="woodshop" data-full="assets/projects/woodshop-05.webp" data-cap="Nightstand · [wood, size]" aria-label="Open photo 5 of 5: nightstand">
+            <img src="assets/projects/woodshop-05-sm.webp" alt="Mid-century walnut nightstand with one drawer (placeholder photo)" width="640" height="360" loading="lazy" decoding="async" />
             <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand" /></svg></span>
             <span class="thumb__cap">Nightstand</span>
           </button>
+        </div>
+      </section>
+      <!-- ===== CLOSING CALL TO ACTION ===== -->
+      <section class="closer" aria-labelledby="h-closer">
+        <div class="closer__copy">
+          <h2 class="closer__title" id="h-closer">Got a project in mind?</h2>
+          <p>Text a photo of the job, call, or send the form. The quote is free.</p>
+        </div>
+        <div class="closer__actions">
+          <button class="cta" type="button" data-goto-tab="contact">Get a free quote</button>
+          <a class="cta cta--ghost" href="sms:+15555550142"><svg aria-hidden="true"><use href="#i-chat" /></svg>Text a photo</a>
+          <a class="cta cta--ghost" href="tel:+15555550142"><svg aria-hidden="true"><use href="#i-phone" /></svg>Call</a>
         </div>
       </section>
     </section>
@@ -666,7 +706,7 @@
           </p>
           <div class="form-actions">
             <button class="cta" type="submit" data-submit>Send request</button>
-            <p class="form-alt">or call / text <a href="tel:+15555550142">(555) 555-0142</a></p>
+            <p class="form-alt">or <a href="tel:+15555550142">call</a> / <a href="sms:+15555550142">text</a> (555) 555-0142</p>
           </div>
           <p class="form-status" role="status" aria-live="polite" hidden></p>
         </form>
@@ -674,7 +714,8 @@
         <aside class="contact__aside" aria-label="Contact details">
           <div class="contact__map"><img src="assets/map.svg" alt="Service-area map (placeholder)" width="640" height="400" loading="lazy" /></div>
           <ul class="contact__details">
-            <li><svg aria-hidden="true"><use href="#i-phone" /></svg><span class="k">Call / text</span><a class="v" href="tel:+15555550142">(555) 555-0142</a></li>
+            <li><svg aria-hidden="true"><use href="#i-phone" /></svg><span class="k">Call</span><a class="v" href="tel:+15555550142">(555) 555-0142</a></li>
+            <li><svg aria-hidden="true"><use href="#i-chat" /></svg><span class="k">Text</span><a class="v" href="sms:+15555550142">Text a photo of the job</a></li>
             <li><svg aria-hidden="true"><use href="#i-mail" /></svg><span class="k">Email</span><a class="v" href="mailto:levi@example.com">levi@example.com</a></li>
             <li><svg aria-hidden="true"><use href="#i-clock" /></svg><span class="k">Hours</span><span class="v">[Mon–Sat · 7a–6p]</span></li>
             <li><svg aria-hidden="true"><use href="#i-winter" /></svg><span class="k">Snow days</span><span class="v">[On call during storms]</span></li>
@@ -683,6 +724,42 @@
           </ul>
         </aside>
       </div>
+
+      <!-- ===== FAQ — answers in [brackets] need Levi's confirmation ===== -->
+      <section class="faq" aria-labelledby="h-faq">
+        <p class="kicker">Good to know</p>
+        <h2 class="faq__title" id="h-faq">Questions, answered</h2>
+        <div class="faq__list">
+          <details class="faq__item" name="faq">
+            <summary>Are you licensed and insured?</summary>
+            <p>Yes. Levi Builds is licensed ([LIC #000000]) and carries general liability insurance. Proof of insurance is available on request.</p>
+          </details>
+          <details class="faq__item" name="faq">
+            <summary>Is the estimate really free?</summary>
+            <p>Yes. I come out, look at the job and send a written quote at no cost and with no obligation.</p>
+          </details>
+          <details class="faq__item" name="faq">
+            <summary>What areas do you cover?</summary>
+            <p>[Your City] and about [30 miles] around it. Just outside that? Ask anyway.</p>
+          </details>
+          <details class="faq__item" name="faq">
+            <summary>How does Clear Path snow removal work?</summary>
+            <p>[Per-storm visits or a season-long plan.] I clear your driveway edge to edge plus the walkways, steps and sidewalk, [once snowfall passes 2 inches], [usually before 7 a.m.].</p>
+          </details>
+          <details class="faq__item" name="faq">
+            <summary>How soon can you start?</summary>
+            <p>Small repairs usually get scheduled within [a week or two]; bigger remodels book [a few weeks] out. Decks in spring and roofs in fall fill up early, so reach out ahead.</p>
+          </details>
+          <details class="faq__item" name="faq">
+            <summary>Do you handle permits?</summary>
+            <p>[Yes. I pull the permits the job needs and schedule the inspections.]</p>
+          </details>
+          <details class="faq__item" name="faq">
+            <summary>Can you build a custom piece of furniture?</summary>
+            <p>Yes. Tell me the piece, the size and the wood you like, and I'll sketch it and quote it. [Most pieces take 3–6 weeks.]</p>
+          </details>
+        </div>
+      </section>
     </section>
   </main>
 
@@ -698,12 +775,13 @@
         <p><strong>Levi Builds</strong> — renovations, repairs, new builds, Clear Path snow removal &amp; handmade furniture in [Your City].</p>
       </div>
       <nav class="footer__links" aria-label="Footer">
-        <a href="#panel-services" data-goto-tab="services">Services</a>
-        <a href="#panel-story" data-goto-tab="story">My Story</a>
-        <a href="#panel-contact" data-goto-tab="contact">Free quote</a>
+        <a href="#services" data-goto-tab="services">Services</a>
+        <a href="#story" data-goto-tab="story">My Story</a>
+        <a href="#contact" data-goto-tab="contact">Free quote</a>
       </nav>
       <div class="footer__contact">
         <a href="tel:+15555550142">(555) 555-0142</a>
+        <a href="sms:+15555550142">Text a photo of the job</a>
         <a href="mailto:levi@example.com">levi@example.com</a>
       </div>
     </div>

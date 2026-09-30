@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 # business-card demo and print files (internal)
 Disallow: /cards/
+
+Sitemap: {{ORIGIN}}/sitemap.xml

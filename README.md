@@ -16,6 +16,13 @@ Everything in `[brackets]` is placeholder copy, and the images are placeholders 
 - **Accessibility and hosting:** motion is on by default, with a **Pause motion** button (hero corner and footer) that stops every animation and is remembered on that device. The site supports keyboard navigation throughout and prints cleanly. A small zero-dependency server makes it ready for Railway.
 - **The Woodshop.** A section under the services list for Levi's handmade furniture: a walnut-textured panel, the kinds of pieces he builds, a photo gallery, and a **Commission a piece** button that starts a quote for *Custom Furniture*.
 - **Business cards.** Four seasonal designs plus a year-round Classic, print-ready PDFs, and a demo page at `/cards/` (see [Business cards](#business-cards)).
+- **Photo placeholders and before/after sliders.** Every service has six realistic placeholder photos, rendered locally with no people in them, and a **drag-to-compare before/after slider**. Each "after" is an edit of its "before", so the pair shows the same room. Every one of these images is stamped **PLACEHOLDER** in the pixels, so none can pass as Levi's work, even when saved or shared on its own. Swap in real photos as they arrive (see *When Levi's photos arrive*).
+- **Easier to act on.**
+  - *How it works* (three steps) and a closing *Got a project in mind?* panel with **Text a photo** (an `sms:` link), Call and Quote buttons.
+  - An FAQ under the quote form.
+  - Tabs now live in the address bar (`#services`, `#story`, `#contact`), so links can be shared and the phone's Back button steps between tabs.
+  - `/#snow` (or any service id) opens that service directly, which is handy on a flyer or in an ad.
+- **Faster first paint.** The season's hero photo starts downloading from `<head>` instead of after the scripts load. A `sitemap.xml` is served, and `robots.txt` points to it.
 
 ---
 
@@ -35,6 +42,7 @@ Two URL options are useful for previewing:
 
 - `?season=winter`, `?season=spring`, `?season=summer` or `?season=fall` forces a season.
 - `?motion=off` / `?motion=on` sets the motion preference, the same as the **Pause motion** button (saved on that device).
+- `#contact`, `#story`, `#snow`, `#decks`, `#woodshop` and similar jump straight to that tab or service.
 
 ---
 
@@ -137,15 +145,15 @@ The card art was rendered from the site's cartoon of Levi. When his real photo a
 | Levi working | `public/assets/photos/work-01.*` |
 | His passions (3) | `public/assets/photos/passion-01…03.*`, plus captions in `index.html` → *Off the clock* |
 | His family | `public/assets/photos/family-01.*`, plus the paragraph in *Who I build for* |
-| Job photos (6 per service) | `public/assets/projects/{service}-01…06.*`; if you switch from `.svg`, update the extension in `content.js` |
-| Furniture he's built (5) | `public/assets/projects/woodshop-01…05.*`, plus the captions and `alt` text in `index.html` → *The Woodshop* |
+| Job photos (6 per service) | `public/assets/projects/{service}-01…06.webp` (1280×720) **and** `-sm.webp` (640×360). The slot order is wide, before, in progress, detail, after, finish. The *before* (02) and *after* (05) feed the slider, so shoot them from the same spot. Snow is different: its 05 is the *before* and its 01 the cleared *after*. |
+| Furniture he's built (5) | `public/assets/projects/woodshop-01…05.webp` + `-sm.webp`, plus the captions and `alt` text in `index.html` → *The Woodshop* |
 | His tattoos | Traced into line art for `public/assets/tattoo.svg` (see *Levi's tattoos* below) |
 
 Before publishing any photo:
 
 - **Strip location data.** Phone photos often record GPS coordinates, which could reveal where the family lives. [Squoosh](https://squoosh.app) removes it on export. In Windows, use right-click → Properties → Details → *Remove Properties and Personal Information*.
 - **Get consent for family photos,** especially of kids.
-- Resize to about 1600px on the long edge and save as WebP or JPG (roughly 200–400 KB each).
+- For job and furniture photos, [`tools/assets/process_photos.py`](tools/assets/process_photos.py) makes both sizes. It crops to 16:9, turns each photo upright and strips all metadata, including GPS. For the other photos, resize to about 1600px on the long edge and save as WebP or JPG (roughly 200–400 KB each).
 - Write real `alt` text describing each photo.
 
 ## Using Levi's real photo for the interactive head
@@ -168,6 +176,8 @@ The seasonal outfits belong to the placeholder illustration, so they won't carry
 
 - [ ] Replace every `[bracketed]` placeholder in `public/index.html`: city, years, stats, hours, license, passions, family, the head-photo captions.
 - [ ] **Publish real reviews only.** Delete the placeholder review cards until you have real ones.
+- [ ] Replace the PLACEHOLDER photos with Levi's real job photos as they come in, starting with the services he gets the most calls for.
+- [ ] Confirm the bracketed FAQ answers (snow plans, start times, permits) and the *How it works* turnaround.
 - [ ] Phone number: find and replace `(555) 555-0142` and `+15555550142` in `public/index.html`, `public/js/content.js` and `public/cards/cards.js`.
 - [ ] Email: find and replace `levi@example.com` in the same two files.
 - [ ] Update the JSON-LD block in the `<head>` of `index.html`: phone, email, area served.
@@ -185,11 +195,11 @@ server.js          zero-dependency production server (static files, compression,
 package.json       "npm start"; Railway detects Node from this
 railway.json       start command, health check, restart policy
 tools/
-  gen-placeholders.js   regenerates the placeholder images (npm run placeholders)
+  gen-placeholders.js   regenerates the line-art placeholders for My Story + the map (npm run placeholders)
   export-cards.js       re-exports the business-card PDFs (node tools/export-cards.js)
   assets/               prompts + pipeline that rendered the seasonal imagery and card art on the GPU box
 public/
-  index.html  404.html  favicon.svg  robots.txt  site.webmanifest
+  index.html  404.html  favicon.svg  robots.txt  sitemap.xml  site.webmanifest
   og-image.jpg       1200×630 share card (four seasons)
   apple-touch-icon.png  icon-512.png
   styles.css         layout & components (colors come from seasonal tokens)
@@ -210,7 +220,7 @@ public/
     tattoo.svg  map.svg
     seasons/         hero backdrops (desktop + mobile, AVIF/WebP), page tints, particle sprites
     photos/          Levi, work, passions, family
-    projects/        6 job photos per service + 5 woodshop pieces
+    projects/        6 job photos per service + 5 woodshop pieces (placeholders, .webp + -sm.webp)
     woodshop/        walnut texture behind the Woodshop section
   cards/             business cards: demo page (index.html), print.html, cards.js (card data),
                      qr.js (QR encoder), art/ (card illustrations), print/ (PDFs, + cmyk/)

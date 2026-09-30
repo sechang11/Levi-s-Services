@@ -1,6 +1,7 @@
 /* services.js — renders the accordion from content.js and handles opening,
-   the cursor spotlight, lazy thumbnails, per-service "Get a quote" buttons,
-   and the seasonal "featured" service that moves to the top. */
+   the cursor spotlight, lazy thumbnails, the before/after sliders,
+   per-service "Get a quote" buttons, and the seasonal "featured" service
+   that moves to the top. */
 import { SERVICES } from './content.js';
 import { openLightbox } from './lightbox.js';
 import { goToQuote } from './form.js';
@@ -14,10 +15,24 @@ function itemHTML(s) {
   const title = esc(s.title);
   const thumbs = s.gallery.map((g, k) => `
           <button type="button" class="thumb" data-svc="${s.id}" data-idx="${k}" aria-label="Open photo ${k + 1} of ${s.gallery.length}: ${esc(g.cap)}">
-            <img data-src="${esc(g.src)}" alt="${esc(g.alt)}" width="640" height="360" decoding="async" />
+            <img data-src="${esc(g.thumb || g.src)}" alt="${esc(g.alt)}" width="640" height="360" decoding="async" />
             <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand"/></svg></span>
             <span class="thumb__cap">${String(k + 1).padStart(2, '0')} · ${esc(g.cap.split(' · ').pop())}</span>
           </button>`).join('');
+  // before/after slider: the "before" photo sits on top, clipped to --pos from the left
+  const [before, after] = (s.compare || []).map((n) => s.gallery[n - 1]);
+  const slider = before && after ? `
+        <figure class="ba">
+          <div class="ba__frame">
+            <img class="ba__img" data-src="${esc(after.src)}" alt="${esc(after.alt)}" width="1280" height="720" decoding="async" />
+            <img class="ba__img ba__img--before" data-src="${esc(before.src)}" alt="${esc(before.alt)}" width="1280" height="720" decoding="async" />
+            <span class="ba__tag ba__tag--before" aria-hidden="true">Before</span>
+            <span class="ba__tag ba__tag--after" aria-hidden="true">After</span>
+            <span class="ba__handle" aria-hidden="true"></span>
+            <input class="ba__range" type="range" min="0" max="100" value="50" aria-label="${title}: compare before and after" aria-valuetext="50% before, 50% after" />
+          </div>
+          <figcaption class="ba__cap">Drag to compare before &amp; after</figcaption>
+        </figure>` : '';
   return `
   <div class="svc" data-id="${s.id}" data-open="false">
     <h3 class="svc__heading">
@@ -36,7 +51,7 @@ function itemHTML(s) {
     <div class="svc__panel" id="svc-${s.id}-panel" role="region" aria-labelledby="svc-${s.id}-btn" inert>
       <div class="svc__inner"><div class="svc__body">
         <p class="svc__desc">${esc(s.desc)}</p>
-        <ul class="svc__points">${s.points.map((p) => `<li><svg aria-hidden="true"><use href="#i-check"/></svg><span>${esc(p)}</span></li>`).join('')}</ul>
+        <ul class="svc__points">${s.points.map((p) => `<li><svg aria-hidden="true"><use href="#i-check"/></svg><span>${esc(p)}</span></li>`).join('')}</ul>${slider}
         <div class="thumbs">${thumbs}</div>
         <div class="svc__actions">
           <button class="cta cta--sm" type="button" data-quote="${s.id}">Get a quote<span class="vh"> for ${title}</span></button>
@@ -61,6 +76,7 @@ function setOpen(svc, open) {
   const panel = svc.querySelector('.svc__panel');
   panel.inert = !open; // collapsed content stays out of the a11y tree + tab order
   if (open) panel.querySelectorAll('img[data-src]').forEach(swapIn);
+  else panel.querySelector('.ba__frame')?.classList.remove('is-seen'); // re-opening nudges again
 }
 
 /** Move a service to the top, badge it, renumber, and (optionally) open only it. */
@@ -113,6 +129,22 @@ export function initServices() {
     }
     const quote = e.target.closest('[data-quote]');
     if (quote) goToQuote(quote.dataset.quote);
+  });
+
+  // before/after sliders: nudge the handle once each time one comes into view…
+  if ('IntersectionObserver' in window) {
+    const seen = new IntersectionObserver((entries) => {
+      for (const en of entries) if (en.isIntersecting) en.target.classList.add('is-seen');
+    }, { threshold: 0.6 });
+    accordion.querySelectorAll('.ba__frame').forEach((f) => seen.observe(f));
+  }
+  // …and the range input drives --pos
+  accordion.addEventListener('input', (e) => {
+    const range = e.target.closest('.ba__range');
+    if (!range) return;
+    const v = Number(range.value);
+    range.parentElement.style.setProperty('--pos', `${v}%`);
+    range.setAttribute('aria-valuetext', `${v}% before, ${100 - v}% after`);
   });
 
   // cursor-tracked spotlight on each service row

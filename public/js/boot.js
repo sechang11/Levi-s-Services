@@ -28,4 +28,19 @@
   }
   root.setAttribute('data-season', pick);
   root.classList.add('js');
+
+  // Start the season's hero photo now instead of when the scripts get to it: it's
+  // the biggest thing on the first screen. Same files and widths seasons.js uses.
+  var base = 'assets/seasons/' + pick + '-';
+  [['(orientation: portrait)', 'mobile', 720, 1088], ['(orientation: landscape)', 'desktop', 1280, 1920]].forEach(function (v) {
+    var l = document.createElement('link');
+    l.rel = 'preload';
+    l.as = 'image';
+    l.type = 'image/avif'; // browsers without AVIF skip it and take the WebP later
+    l.media = v[0];
+    l.setAttribute('imagesrcset', base + v[1] + '-' + v[2] + '.avif ' + v[2] + 'w, ' + base + v[1] + '-' + v[3] + '.avif ' + v[3] + 'w');
+    l.setAttribute('imagesizes', '100vw');
+    l.setAttribute('fetchpriority', 'high');
+    document.head.appendChild(l);
+  });
 })();

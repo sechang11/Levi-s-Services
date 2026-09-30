@@ -1,6 +1,14 @@
 /* tabs.js — WAI-ARIA tabs (roving tabindex) with a sliding underline and a
-   View Transitions cross-fade between panels. */
+   View Transitions cross-fade between panels. The address bar follows along:
+   #services · #story · #contact are shareable links, and Back/Forward step
+   between tabs (main.js routes them, plus service deep links like #snow). */
 import { reduceMotion } from './motion.js';
+export const TAB_IDS = ['services', 'story', 'contact'];
+/** The tab a URL hash names (#story, or the older #panel-story), else null. */
+export const tabFromHash = (hash = location.hash) => {
+  const id = hash.replace(/^#(panel-)?/, '');
+  return TAB_IDS.includes(id) ? id : null;
+};
 let tabs = [];
 let underline = null;
 let vt = null;
@@ -25,16 +33,27 @@ function apply(tab) {
   moveUnderline(tab);
 }
 
+/* Put #id in the address bar: 'push' adds a Back step, 'replace' doesn't, 'none' leaves it. */
+function syncHash(id, mode) {
+  if (mode === 'none' || location.hash === `#${id}`) return;
+  if (id === 'services' && !tabFromHash()) return; // no hash already means Services
+  const url = new URL(location.href);
+  url.hash = id;
+  history[mode === 'replace' ? 'replaceState' : 'pushState'](null, '', url);
+}
+
 /** Switch to a tab by id ('services' | 'story' | 'contact').
     Resolves once the new panel is in the DOM (safe to focus inside it). */
-export function showTab(id, { focus = false } = {}) {
+export function showTab(id, { focus = false, history: mode = 'push' } = {}) {
   const tab = tabFor(id);
   if (!tab) return Promise.resolve();
   if (tab.classList.contains('is-active')) { if (focus) tab.focus(); return Promise.resolve(); }
+  syncHash(id, mode);
   const run = () => { apply(tab); if (focus) tab.focus(); };
   if (document.startViewTransition && !reduceMotion() && !vt) {
     vt = document.startViewTransition(run);
-    vt.finished.finally(() => { vt = null; });
+    vt.ready.catch(() => {}); // skipped (hidden tab, rapid clicks): the swap still happens, no animation
+    vt.finished.finally(() => { vt = null; }).catch(() => {});
     return vt.updateCallbackDone.catch(() => {});
   }
   run(); // a transition is in flight, or no support → plain swap
@@ -57,7 +76,7 @@ export function initTabs() {
       if (!(e.key in map)) return;
       e.preventDefault();
       const next = tabs[(map[e.key] + tabs.length) % tabs.length];
-      showTab(next.id.replace('tab-', ''), { focus: true });
+      showTab(next.id.replace('tab-', ''), { focus: true, history: 'replace' });
     });
   });
 

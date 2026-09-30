@@ -8,15 +8,18 @@ export const CONTACT = {
   email: 'levi@example.com', // the quote form falls back to emailing this address
 };
 
-/* Gallery helper: six photos per service at assets/projects/{id}-01…06.
-   Swap in real photos by replacing those files (any format — update the
-   extension below if you switch to .jpg/.webp). */
+/* Gallery helper: six photos per service at assets/projects/{id}-01…06.webp
+   (1280×720, the lightbox + before/after slider) plus {id}-01…06-sm.webp
+   (640×360 thumbnails). The current files are AI renders stamped PLACEHOLDER;
+   swap in Levi's real photos by replacing them (keep both sizes).
+   `compare` = which two shots (1-based) the before/after slider uses. */
 const WORK_SHOTS = ['Wide', 'Before', 'In progress', 'Detail', 'After', 'Finish'];
 const gallery = (id, name, labels = WORK_SHOTS) =>
   labels.map((label, i) => {
     const n = String(i + 1).padStart(2, '0');
     return {
-      src: `assets/projects/${id}-${n}.svg`,
+      src: `assets/projects/${id}-${n}.webp`,
+      thumb: `assets/projects/${id}-${n}-sm.webp`,
       alt: `${name} — ${label.toLowerCase()} (placeholder photo)`,
       cap: `${name} · ${label}`,
     };
@@ -79,10 +82,14 @@ export const SERVICES = [
     tag: 'Winter',
     desc: "Clear Path keeps your place moving all winter. Levi clears driveways edge to edge and opens up every path to your door — walkways, front steps and sidewalks — so you're never stuck digging out.",
     points: ['Driveways cleared edge to edge', 'Walkways & paths to every door', 'Front steps & sidewalks', '[Per-storm or season-long plans — confirm details]'],
-    shots: ['Driveway', 'Walkway', 'Front steps', 'Sidewalk', 'Before / after', 'Night clearing'],
+    shots: ['Driveway', 'Walkway', 'Front steps', 'Sidewalk', 'Before', 'Night clearing'],
+    compare: [5, 1], // the buried driveway → the same driveway cleared
   },
 ];
-for (const s of SERVICES) s.gallery = gallery(s.id, s.title, s.shots);
+for (const s of SERVICES) {
+  s.gallery = gallery(s.id, s.title, s.shots);
+  s.compare ??= [2, 5]; // Before → After
+}
 
 export const serviceById = (id) => SERVICES.find((s) => s.id === id);
 

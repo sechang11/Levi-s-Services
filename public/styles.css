@@ -611,7 +611,7 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 /* collapsible body — jank-free grid-rows 0fr→1fr */
 .svc__panel{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .38s var(--ease); }
 .svc[data-open="true"] .svc__panel{ grid-template-rows:1fr; }
-.svc__inner{ overflow:hidden; min-height:0; }
+.svc__inner{ overflow:hidden; min-height:0; container:svc / inline-size; }
 .svc__body{
   display:grid; gap:18px;
   padding:0 clamp(16px,3vw,26px) clamp(18px,3vw,26px) clamp(16px,5vw,58px);
@@ -625,6 +625,58 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 .svc__points li{ display:flex; align-items:flex-start; gap:10px; font-size:.95rem; }
 .svc__points svg{ width:18px; height:18px; flex:none; margin-top:3px; color:var(--accent-2); }
 .svc__actions{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+/* wide panels: words on the left, the before/after slider beside them, photos underneath */
+@container svc (min-width:820px){
+  /* row 4 (1fr) soaks up the slider's extra height, so the text stays stacked at the top */
+  .svc__body{ grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); grid-template-rows:auto auto auto 1fr auto; column-gap:clamp(22px,3vw,38px); align-items:start; }
+  .svc__desc{ grid-column:1; grid-row:1; }
+  .svc__points{ grid-column:1; grid-row:2; grid-template-columns:1fr; }
+  .svc__actions{ grid-column:1; grid-row:3; }
+  .svc__body > .ba{ grid-column:2; grid-row:1 / 5; }
+  .svc__body > .thumbs{ grid-column:1 / -1; grid-row:5; }
+}
+
+/* before/after slider: "before" on top, clipped to --pos; a transparent range input drives it */
+@property --pos{ syntax:"<percentage>"; inherits:true; initial-value:50%; }
+.ba{ margin:0; }
+.ba__frame{
+  --pos:50%;
+  position:relative; overflow:hidden; aspect-ratio:16 / 9;
+  border-radius:var(--radius-sm); background:var(--surface-deep);
+  box-shadow:inset 0 0 0 1px var(--hairline), 0 14px 30px -18px rgba(0,0,0,.8);
+}
+.ba__img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; user-select:none; }
+.ba__img--before{ clip-path:inset(0 calc(100% - var(--pos)) 0 0); }
+.ba__handle{
+  position:absolute; top:0; bottom:0; left:var(--pos); width:2px; margin-left:-1px; pointer-events:none;
+  background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.3), 0 0 14px rgba(0,0,0,.45);
+}
+.ba__handle::after{   /* the grip: a ring with ◀ ▶ */
+  content:""; position:absolute; top:50%; left:50%; width:42px; height:42px; translate:-50% -50%;
+  border-radius:50%; border:2px solid #fff;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9 7 4 12l5 5zM15 7l5 5-5 5z'/%3E%3C/svg%3E") center / 22px no-repeat,
+    color-mix(in oklab, var(--void) 55%, transparent);
+  box-shadow:0 4px 14px rgba(0,0,0,.5);
+  transition:scale .2s var(--ease);
+}
+.ba__frame:hover .ba__handle::after{ scale:1.08; }
+.ba__frame:has(.ba__range:focus-visible) .ba__handle::after{ outline:3px solid var(--focus); outline-offset:3px; }
+.ba__range{
+  position:absolute; inset:0; z-index:2; width:100%; height:100%; margin:0;
+  opacity:0; cursor:ew-resize; touch-action:pan-y;   /* vertical swipes still scroll the page */
+}
+.ba__tag{
+  position:absolute; top:10px; z-index:1; padding:3px 8px; border-radius:2px; pointer-events:none;
+  background:rgba(8,9,20,.78); color:var(--text);
+  font:600 10px/1.4 var(--font-mono); letter-spacing:.1em; text-transform:uppercase;
+}
+.ba__tag--before{ left:10px; border-left:2px solid var(--accent); }
+.ba__tag--after{ right:10px; border-right:2px solid var(--accent-2); }
+.ba__cap{ margin-top:8px; font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+/* a one-time nudge when the slider comes into view (services.js adds .is-seen), so the handle reads as draggable */
+.svc[data-open="true"] .ba__frame.is-seen{ animation:ba-hint 1.5s .3s var(--ease) 1; }   /* no fill-mode: a drag's value takes over after */
+@keyframes ba-hint{ 0%,100%{ --pos:50%; } 35%{ --pos:36%; } 70%{ --pos:62%; } }
 
 /* project thumbnails (buttons → lightbox) */
 .thumbs{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
@@ -670,6 +722,29 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 .thumb:hover .thumb__zoom,.thumb:focus-visible .thumb__zoom,
 .photo:hover .photo__zoom,.photo:focus-visible .photo__zoom{ opacity:1; }
 @media (hover:none){ .thumb__zoom,.photo__zoom{ opacity:1; } }
+
+/* =====================================================================
+   HOW IT WORKS — three steps under the services list
+   ===================================================================== */
+.steps{ margin-top:calc(var(--space)*6); }
+.steps__title{
+  margin:8px 0 18px; font-family:var(--font-display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(1.7rem,4vw,2.5rem); line-height:1; letter-spacing:-.005em;
+}
+.steps__list{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(12px,2vw,20px); counter-reset:none; }
+@media (max-width:760px){ .steps__list{ grid-template-columns:1fr; } }
+.step{
+  position:relative; overflow:hidden; padding:18px 18px 20px;
+  border-radius:var(--radius); border-top:3px solid var(--accent);
+  background:var(--surface); box-shadow:inset 0 0 0 1px var(--hairline-metal);
+}
+.step__num{
+  position:absolute; right:12px; top:4px;
+  font-family:var(--font-display); font-size:3.6rem; line-height:1; color:color-mix(in oklab, var(--text) 9%, transparent);
+}
+.step__icon{ width:26px; height:26px; color:var(--accent-2); }
+.step h3{ margin:12px 0 6px; font-family:var(--font-heavy); font-weight:400; font-size:1rem; letter-spacing:.04em; text-transform:uppercase; }
+.step p{ margin:0; color:var(--muted); font-size:.95rem; }
 
 /* =====================================================================
    THE WOODSHOP — handmade furniture, under the services list
@@ -719,7 +794,7 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 .woodshop__gallery{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
 .woodshop__shot{
   position:relative; display:block; margin:0; padding:0; border:0; overflow:hidden; cursor:zoom-in;
-  border-radius:var(--radius-sm); aspect-ratio:4/3;
+  border-radius:var(--radius-sm); aspect-ratio:16/9;   /* = the photos, so the PLACEHOLDER stamp never crops */
   background:var(--surface-deep); color:inherit; font:inherit;
   box-shadow:inset 0 0 0 1px var(--hairline);
   transition:box-shadow .2s;
@@ -736,8 +811,51 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 }
 @media (max-width:560px){
   .woodshop__gallery{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .woodshop__shot:first-child{ grid-row:auto; aspect-ratio:16/10; }
+  .woodshop__shot:first-child{ grid-row:auto; aspect-ratio:16/9; }
 }
+
+/* =====================================================================
+   CLOSING CALL TO ACTION — end of the services tab
+   ===================================================================== */
+.closer{
+  margin-top:calc(var(--space)*6);
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:18px 28px;
+  padding:clamp(20px,3.4vw,34px);
+  border-radius:var(--radius);
+  background:
+    radial-gradient(120% 160% at 100% 0%, color-mix(in oklab, var(--accent) 22%, transparent), transparent 60%),
+    var(--surface);
+  box-shadow:inset 0 0 0 1px var(--hairline-metal);
+}
+.closer__title{ margin:0 0 6px; font-family:var(--font-display); font-weight:400; text-transform:uppercase; font-size:clamp(1.7rem,4vw,2.5rem); line-height:1; }
+.closer__copy p{ margin:0; color:var(--muted); }
+.closer__actions{ display:flex; flex-wrap:wrap; gap:12px; }
+@media (max-width:560px){ .closer__actions .cta{ flex:1 1 100%; } }
+
+/* =====================================================================
+   FAQ — under the quote form
+   ===================================================================== */
+.faq{ margin-top:calc(var(--space)*6); max-width:860px; }
+.faq__title{ margin:8px 0 16px; font-family:var(--font-display); font-weight:400; text-transform:uppercase; font-size:clamp(1.7rem,4vw,2.5rem); line-height:1; }
+.faq__list{ display:grid; gap:10px; }
+.faq__item{ border-radius:var(--radius); background:var(--surface); box-shadow:inset 0 0 0 1px var(--hairline-metal); }
+.faq__item summary{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  min-height:52px; padding:12px 16px; cursor:pointer; list-style:none;
+  font-weight:600;
+}
+.faq__item summary::-webkit-details-marker{ display:none; }
+.faq__item summary::after{   /* + that turns into × */
+  content:""; flex:none; width:14px; height:14px;
+  background:
+    linear-gradient(var(--accent-2), var(--accent-2)) center / 100% 2px no-repeat,
+    linear-gradient(var(--accent-2), var(--accent-2)) center / 2px 100% no-repeat;
+  transition:rotate .25s var(--ease);
+}
+.faq__item[open] summary::after{ rotate:45deg; }
+.faq__item[open]{ box-shadow:inset 0 0 0 1px var(--hairline-metal), inset 3px 0 0 var(--accent); }
+.faq__item summary:hover{ color:var(--accent-2); }
+.faq__item p{ margin:0; padding:0 16px 16px; max-width:70ch; color:var(--muted); }
 
 /* =====================================================================
    MY STORY — Levi, his work, his passions, his family
@@ -970,6 +1088,7 @@ body.lb-open{ overflow:hidden; }
 .notfound{ min-height:70vh; display:grid; place-content:center; justify-items:center; gap:18px; padding:48px 20px; text-align:center; }
 .notfound__code{ margin:0; font-family:var(--font-display); font-size:clamp(5rem,20vw,10rem); line-height:.9; color:var(--accent); filter:drop-shadow(0 0 30px var(--glow)); }
 .notfound p{ margin:0; max-width:44ch; color:var(--muted); }
+.notfound .notfound__actions{ display:flex; flex-wrap:wrap; justify-content:center; gap:12px; max-width:none; }
 
 /* =====================================================================
    RESPONSIVE

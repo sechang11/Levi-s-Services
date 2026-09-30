@@ -13,6 +13,11 @@ function render() {
   img.alt = it.alt || '';
   cap.textContent = it.cap || '';
   counter.textContent = items.length > 1 ? `${index + 1} / ${items.length}` : '';
+  // warm the neighbours so the next swipe / arrow is instant
+  for (const d of [1, -1]) {
+    const next = items[(index + d + items.length) % items.length];
+    if (items.length > 1 && next?.src) new Image().src = next.src;
+  }
 }
 
 /** Open the gallery. items = [{ src, alt, cap }], start = index, trigger = element to refocus on close. */
@@ -85,7 +90,7 @@ export function initLightbox() {
     const group = [...document.querySelectorAll(`[data-lightbox][data-gallery="${trigger.dataset.gallery}"]`)];
     const list = group.map((el) => {
       const pic = el.querySelector('img');
-      return { src: pic?.currentSrc || pic?.src, alt: pic?.alt, cap: el.dataset.cap || pic?.alt };
+      return { src: el.dataset.full || pic?.currentSrc || pic?.src, alt: pic?.alt, cap: el.dataset.cap || pic?.alt }; // data-full: a bigger file than the thumbnail
     });
     openLightbox(list, group.indexOf(trigger), trigger);
   });

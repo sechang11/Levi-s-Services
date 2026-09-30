@@ -23,7 +23,7 @@ function backdropHTML(key) {
     <source type="image/avif" media="(orientation: portrait)" srcset="${set('mobile', 'avif', [720, 1088])}" sizes="100vw">
     <source type="image/webp" media="(orientation: portrait)" srcset="${set('mobile', 'webp', [720, 1088])}" sizes="100vw">
     <source type="image/avif" srcset="${set('desktop', 'avif', [1280, 1920])}" sizes="100vw">
-    <img src="${b}-desktop-1920.webp" srcset="${set('desktop', 'webp', [1280, 1920])}" sizes="100vw" alt="" decoding="async">`;
+    <img src="${b}-desktop-1920.webp" srcset="${set('desktop', 'webp', [1280, 1920])}" sizes="100vw" alt="" fetchpriority="high">`;
 }
 
 function setBackdrop(key) {
