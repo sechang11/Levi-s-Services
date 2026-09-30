@@ -20,6 +20,8 @@ Everything in `[brackets]` is placeholder copy, and the images are placeholders 
 - **Easier to act on.**
   - *How it works* (three steps) and a closing *Got a project in mind?* panel with **Text a photo** (an `sms:` link), Call and Quote buttons.
   - An FAQ under the quote form.
+  - **On phones**, a Call · Text · Free quote bar sits at the bottom of the screen once the hero scrolls away. It steps aside over the quote form and the footer, and while typing.
+  - The quote form asks the **best way to reach** the customer (text, call or email) and their **timeline**. Both show up in the notification, and the thank-you message promises the right kind of reply.
   - Tabs now live in the address bar (`#services`, `#story`, `#contact`), so links can be shared and the phone's Back button steps between tabs.
   - `/#snow` (or any service id) opens that service directly, which is handy on a flyer or in an ad.
 - **Faster first paint.** The season's hero photo starts downloading from `<head>` instead of after the scripts load. A `sitemap.xml` is served, and `robots.txt` points to it.

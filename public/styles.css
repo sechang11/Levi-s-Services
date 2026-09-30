@@ -981,6 +981,24 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 .field__err{ color:#FFB8B8; font-size:.85rem; }
 .field__err:empty{ display:none; }
 .field__hint{ margin:0 0 16px; color:var(--muted); font-size:.85rem; }
+/* "best way to reach you": radio pills (the real radios sit invisible on top, so arrows/space still work) */
+.field--choice{ display:block; border:0; padding:0; min-width:0; }
+.field--choice legend{
+  padding:0; margin-bottom:8px; font-size:11px; color:var(--muted);
+  font-family:var(--font-mono); letter-spacing:.06em; text-transform:uppercase; text-shadow:0 1px 0 rgba(0,0,0,.6);
+}
+.choice{ display:flex; flex-wrap:wrap; gap:8px; }
+.choice label{ position:relative; font:inherit; letter-spacing:normal; text-transform:none; text-shadow:none; color:var(--text); }
+.field .choice input{ position:absolute; inset:0; width:100%; height:100%; min-height:0; margin:0; padding:0; border:0; opacity:0; cursor:pointer; }
+.choice span{
+  display:inline-flex; align-items:center; min-height:44px; padding:0 20px; border-radius:999px;
+  background:var(--surface-deep); box-shadow:inset 0 0 0 1px var(--hairline); font-weight:600;
+  transition:box-shadow .2s, background .2s;
+}
+.choice label:hover span{ box-shadow:inset 0 0 0 1px var(--accent); }
+.choice input:checked + span{ background:color-mix(in oklab, var(--accent) 20%, var(--surface-deep)); box-shadow:inset 0 0 0 2px var(--accent); }
+.choice input:focus-visible + span{ outline:3px solid var(--focus); outline-offset:2px; }
+.form-privacy{ margin:12px 0 0; color:var(--muted); font-size:.82rem; }
 .hp{ position:absolute !important; left:-10000px; width:1px; height:1px; overflow:hidden; }
 .form-actions{ display:flex; flex-wrap:wrap; align-items:center; gap:12px 20px; margin-top:6px; }
 .form-alt{ margin:0; color:var(--muted); font-size:.92rem; }
@@ -1038,6 +1056,33 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 }
 .footer__motion:hover{ color:var(--text); text-decoration:underline; text-decoration-color:var(--accent-2); }
 .footer__motion svg{ width:11px; height:11px; color:var(--accent-2); }
+
+/* =====================================================================
+   PHONE QUICK ACTIONS — Call · Text · Free quote (actionbar.js)
+   ===================================================================== */
+.actionbar{ display:none; }
+@media (max-width:720px){
+  .actionbar:not([hidden]){
+    position:fixed; left:0; right:0; bottom:0; z-index:40;
+    display:grid; grid-template-columns:1fr 1fr 1.35fr; gap:8px;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    background:color-mix(in oklab, var(--void) 86%, transparent);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    border-top:1px solid var(--hairline-metal);
+    box-shadow:0 -10px 30px -12px rgba(0,0,0,.7);
+    transform:translateY(110%); transition:transform .3s var(--ease);
+  }
+  .actionbar.is-shown{ transform:none; }
+}
+.actionbar__btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:46px; padding:0 10px;
+  border:0; border-radius:999px; cursor:pointer; text-decoration:none;
+  font:600 .92rem/1 var(--font-body); color:var(--text);
+  background:var(--surface-2); box-shadow:inset 0 0 0 1px var(--hairline-metal);
+}
+.actionbar__btn svg{ width:18px; height:18px; flex:none; color:var(--accent-2); }
+.actionbar__btn--quote{ background:linear-gradient(180deg, var(--cta-1), var(--cta-2)); color:#fff; box-shadow:none; }
+.actionbar__btn--quote svg{ color:#fff; }
 
 /* =====================================================================
    LIGHTBOX
@@ -1162,7 +1207,7 @@ html[data-motion="off"] .season-fx{ display:none; }
   body{ background:#fff; color:#111; }
   body::before,body::after,.concrete,.season-fx,.hero__photo,.hero__light,.hero__ink,.hero__sun,.hero-ground,
   .topbar .season-switch,.tabbar,.head-stage,.head-hint,.season-chip,.cta,.lightbox,.thumb::before,.svc__toggle,
-  .motion-toggle,.footer__motion,.woodshop::before,.woodshop::after,.woodshop__gallery{ display:none !important; }
+  .motion-toggle,.footer__motion,.woodshop::before,.woodshop::after,.woodshop__gallery,.actionbar,.ba,.closer__actions{ display:none !important; }
   .woodshop{ background:none; box-shadow:none; padding:0; }
   .hero__headline,.svc-title{ -webkit-text-fill-color:#111 !important; color:#111 !important; background:none !important; filter:none !important; }
   .svc-title::before{ display:none !important; }

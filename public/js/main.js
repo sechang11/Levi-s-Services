@@ -8,6 +8,7 @@ import { initFx } from './fx.js';
 import { initSeasons, currentSeason } from './seasons.js';
 import { initHead } from './head.js';
 import { initMotionToggles } from './motion.js';
+import { initActionBar } from './actionbar.js';
 import { SEASONS, serviceById } from './content.js';
 
 initLightbox();
@@ -18,6 +19,7 @@ initFx();
 initSeasons();
 initHead();
 initMotionToggles();
+initActionBar();
 
 // hero: the seasonal chip opens that season's featured service…
 document.querySelector('[data-season-chip]')?.addEventListener('click', async (e) => {

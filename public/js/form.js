@@ -41,6 +41,8 @@ function validate(d) {
   const errs = {};
   if (!d.name) errs.name = 'Please add your name.';
   if (!d.phone && !d.email) errs.contact = 'Add a phone number or an email so Levi can reach you.';
+  else if ((d.reach === 'Text' || d.reach === 'Call') && !d.phone) errs.contact = `Add a phone number so Levi can ${d.reach.toLowerCase()} you.`;
+  else if (d.reach === 'Email' && !d.email) errs.contact = 'Add an email so Levi can write back.';
   if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) errs.email = "That email doesn't look quite right.";
   return errs;
 }
@@ -65,7 +67,8 @@ function showErrors(errs) {
 
 function mailtoFor(d) {
   const subject = `Quote request${d.service ? ` — ${d.service}` : ''}`;
-  const lines = [`Name: ${d.name}`, d.phone && `Phone: ${d.phone}`, d.email && `Email: ${d.email}`, d.service && `Service: ${d.service}`].filter(Boolean);
+  const lines = [`Name: ${d.name}`, d.phone && `Phone: ${d.phone}`, d.email && `Email: ${d.email}`, d.reach && `Best way to reach me: ${d.reach}`,
+    d.service && `Service: ${d.service}`, d.timeline && `Timeline: ${d.timeline}`].filter(Boolean);
   if (d.message) lines.push('', d.message);
   return `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
 }
@@ -88,7 +91,8 @@ async function onSubmit(e) {
 
   if (res?.ok) {
     const first = data.name.split(/\s+/)[0];
-    setStatus(`Thanks, ${first} — your request is in. Levi will get back to you soon.`);
+    const how = { Text: 'text you', Call: 'call you', Email: 'email you' }[data.reach] || 'get back to you';
+    setStatus(`Thanks, ${first} — your request is in. Levi will ${how} within [one business day].`);
     form.reset();
     return;
   }

@@ -246,7 +246,9 @@ async function deliver(q) {
     `Name: ${q.name}`,
     q.phone && `Phone: ${q.phone}`,
     q.email && `Email: ${q.email}`,
+    q.reach && `Best way to reach: ${q.reach}`,
     q.service && `Service: ${q.service}`,
+    q.timeline && `Timeline: ${q.timeline}`,
     q.message && `\n${q.message}`,
   ].filter(Boolean).join('\n');
 
@@ -292,6 +294,8 @@ async function handleQuote(req, res) {
     phone: clean(data.phone, 40),
     email: clean(data.email, 120),
     service: clean(data.service, 80),
+    timeline: clean(data.timeline, 40),
+    reach: ['Text', 'Call', 'Email'].includes(data.reach) ? data.reach : '',
     message: clean(data.message, 2000, true),
   };
   const fields = [];
