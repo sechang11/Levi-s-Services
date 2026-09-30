@@ -8,23 +8,6 @@ export const CONTACT = {
   email: 'levi@example.com', // the quote form falls back to emailing this address
 };
 
-/* Gallery helper: six photos per service at assets/projects/{id}-01…06.webp
-   (1280×720, the lightbox + before/after slider) plus {id}-01…06-sm.webp
-   (640×360 thumbnails). The current files are AI renders stamped PLACEHOLDER;
-   swap in Levi's real photos by replacing them (keep both sizes).
-   `compare` = which two shots (1-based) the before/after slider uses. */
-const WORK_SHOTS = ['Wide', 'Before', 'In progress', 'Detail', 'After', 'Finish'];
-const gallery = (id, name, labels = WORK_SHOTS) =>
-  labels.map((label, i) => {
-    const n = String(i + 1).padStart(2, '0');
-    return {
-      src: `assets/projects/${id}-${n}.webp`,
-      thumb: `assets/projects/${id}-${n}-sm.webp`,
-      alt: `${name} — ${label.toLowerCase()} (placeholder photo)`,
-      cap: `${name} · ${label}`,
-    };
-  });
-
 /* Base order of the accordion. Each season moves its "featured" service to
    the top (see SEASONS below). */
 export const SERVICES = [
@@ -82,16 +65,92 @@ export const SERVICES = [
     tag: 'Winter',
     desc: "Clear Path keeps your place moving all winter. Levi clears driveways edge to edge and opens up every path to your door — walkways, front steps and sidewalks — so you're never stuck digging out.",
     points: ['Driveways cleared edge to edge', 'Walkways & paths to every door', 'Front steps & sidewalks', '[Per-storm or season-long plans — confirm details]'],
-    shots: ['Driveway', 'Walkway', 'Front steps', 'Sidewalk', 'Before', 'Night clearing'],
-    compare: [5, 1], // the buried driveway → the same driveway cleared
   },
 ];
-for (const s of SERVICES) {
-  s.gallery = gallery(s.id, s.title, s.shots);
-  s.compare ??= [2, 5]; // Before → After
-}
 
 export const serviceById = (id) => SERVICES.find((s) => s.id === id);
+
+/* ---------------------------------------------------------------- jobs
+   Recent work: one entry per job, NEWEST FIRST. Jobs are the single source of
+   photos: they fill the Recent work section, and each service's gallery and
+   before/after slider are gathered from the jobs tagged with that service.
+
+   Photos live in assets/projects/ as <file>.webp (1280×720) + <file>-sm.webp
+   (640×360); tools/assets/process_photos.py makes both from Levi's originals
+   (and strips the GPS data phones put in them). A real job looks like:
+     {
+       id: 'maple-st-kitchen', title: 'Kitchen remodel', area: 'Maple Heights',
+       when: 'May 2027', length: '3 weeks', services: ['kitchen', 'demolition', 'flooring'],
+       summary: 'Two or three sentences: what they needed, what Levi did, how it turned out.',
+       quote: { text: 'Only with the client’s OK.', name: 'Dana R.' },   // optional
+       photos: [{ file: 'maple-kitchen-01', label: 'Before', services: ['demolition'] }, …],
+       before: 0, after: 4,   // photo indexes for the slider (optional)
+     }
+   A photo without `services` counts for every service the job lists.
+   The `sample: true` jobs below are PLACEHOLDERS built from the stamped
+   renders: delete them as real jobs come in. */
+const WORK_SHOTS = ['Wide', 'Before', 'In progress', 'Detail', 'After', 'Finish'];
+const sampleShots = (prefix, labels = WORK_SHOTS) =>
+  labels.map((label, i) => ({ file: `${prefix}-${String(i + 1).padStart(2, '0')}`, label }));
+const sample = (service, title, extra = {}) => ({
+  id: `sample-${service}`,
+  sample: true,
+  title: `[${title}]`,
+  area: '[Neighborhood]',
+  when: '[Month Year]',
+  length: '[Time on site]',
+  services: [service],
+  summary: '[What the client needed, what Levi did, and how it turned out: two or three sentences.]',
+  photos: sampleShots(service),
+  before: 1,
+  after: 4,
+  ...extra,
+});
+
+export const PROJECTS = [
+  sample('snow', 'Clear Path season plan', {
+    length: '[Every storm, Dec–Mar]',
+    photos: sampleShots('snow', ['Driveway', 'Walkway', 'Front steps', 'Sidewalk', 'Before', 'Night clearing']),
+    before: 4, // the buried driveway → the same driveway cleared
+    after: 0,
+  }),
+  sample('kitchen', 'Kitchen remodel'),
+  sample('decks', 'Deck rebuild'),
+  sample('roofing', 'Roof replacement'),
+  sample('concrete', 'Walkway replacement'),
+  sample('drywall', 'Drywall repair & repaint'),
+  sample('flooring', 'New flooring'),
+  sample('framing', 'Basement framing'),
+  sample('demolition', 'Kitchen tear-out'),
+  sample('furniture', 'Walnut dining table', {
+    photos: [{ file: 'woodshop-01', label: 'Finished table' }, { file: 'woodshop-04', label: 'Cutting board from the offcuts' }],
+    before: null,
+    after: null,
+  }),
+];
+
+const asset = (file, size = '') => `assets/projects/${file}${size}.webp`;
+for (const p of PROJECTS) {
+  for (const ph of p.photos) {
+    ph.src = asset(ph.file);
+    ph.thumb = asset(ph.file, '-sm');
+    ph.alt ??= `${p.title.replace(/[[\]]/g, '')}: ${ph.label.toLowerCase()}${p.sample ? ' (placeholder photo)' : ''}`;
+  }
+}
+export const projectById = (id) => PROJECTS.find((p) => p.id === id);
+
+/* Each service's gallery (up to 6 photos, newest jobs first) and before/after
+   pair, gathered from the jobs tagged with it. */
+for (const s of SERVICES) {
+  const jobs = PROJECTS.filter((p) => p.services.includes(s.id));
+  s.jobs = jobs.length;
+  s.gallery = jobs
+    .flatMap((p) => p.photos.filter((ph) => !ph.services || ph.services.includes(s.id)))
+    .slice(0, 6)
+    .map((ph) => ({ src: ph.src, thumb: ph.thumb, alt: ph.alt, cap: `${s.title} · ${ph.label}` }));
+  const pair = jobs.find((p) => p.before != null && p.after != null);
+  s.compare = pair ? [pair.photos[pair.before], pair.photos[pair.after]] : null;
+}
 
 /* The Woodshop: Levi's handmade furniture (the section under the services
    list — its photos live in index.html). Not an accordion service, but it is a
@@ -112,6 +171,13 @@ export const SEASONS = {
     chip: 'Spring thaw — fixing what winter broke',
     tagline: "Heaved walkways, cracked steps, tired walls — spring is when we fix what winter broke and start what's next.",
     cta: 'Plan a spring project',
+    checklist: [
+      'Walk your walkways and steps for frost heave, cracks and trip edges',
+      'Check the deck for loose boards, popped nails and soft spots',
+      'Clear the gutters after the spring seed and pollen drop',
+      'Look for new water stains on ceilings after the thaw',
+      'Book summer builds now: decks and fences fill up fast',
+    ],
   },
   summer: {
     label: 'Summer',
@@ -119,6 +185,13 @@ export const SEASONS = {
     chip: 'Build season — decks & fences booking now',
     tagline: 'Long days, big builds. Decks, fences and additions done right the first time — licensed, insured, on schedule.',
     cta: 'Get a free quote',
+    checklist: [
+      'Re-stain or seal the deck (every 2–3 years keeps the wood happy)',
+      'Push on fence posts: rot starts at the base',
+      'Do exterior paint and siding repairs while the weather is dry',
+      'Seal driveway cracks before the fall rains get in',
+      'Book fall roof and gutter work before the rush',
+    ],
   },
   fall: {
     label: 'Fall',
@@ -126,6 +199,13 @@ export const SEASONS = {
     chip: 'Beat the freeze — roofs & gutters before first snow',
     tagline: 'Roofs, gutters and exterior work wrapped up before the first freeze — and when the snow comes, we clear it.',
     cta: 'Book before winter',
+    checklist: [
+      'Clean the gutters once the leaves are down',
+      'Check shingles and flashing before the first freeze',
+      'Seal cracks in the driveway and walkways',
+      'Shut off and drain the outdoor faucets',
+      'Line up snow removal before the first storm',
+    ],
   },
   winter: {
     label: 'Winter',
@@ -133,5 +213,12 @@ export const SEASONS = {
     chip: 'Clear Path snow removal — driveways & walkways',
     tagline: "Driveways and walkways cleared before you're out the door — plus warm indoor remodels while the ground is frozen.",
     cta: 'Book snow clearing',
+    checklist: [
+      'Keep walkways, steps and sidewalks clear and salted',
+      'Watch the roof edge for ice dams and big icicles',
+      'Keep snow piles away from the foundation and vents',
+      'Check windows and doors for drafts',
+      'Plan spring remodels now, while the schedule is open',
+    ],
   },
 };

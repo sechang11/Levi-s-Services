@@ -6,6 +6,7 @@ import { SERVICES } from './content.js';
 import { openLightbox } from './lightbox.js';
 import { goToQuote } from './form.js';
 import { reduceMotion } from './motion.js';
+import { baHTML, watchBA } from './ba.js';
 
 const esc = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const byId = new Map(); // service id → .svc element
@@ -19,20 +20,9 @@ function itemHTML(s) {
             <span class="thumb__zoom" aria-hidden="true"><svg><use href="#i-expand"/></svg></span>
             <span class="thumb__cap">${String(k + 1).padStart(2, '0')} · ${esc(g.cap.split(' · ').pop())}</span>
           </button>`).join('');
-  // before/after slider: the "before" photo sits on top, clipped to --pos from the left
-  const [before, after] = (s.compare || []).map((n) => s.gallery[n - 1]);
-  const slider = before && after ? `
-        <figure class="ba">
-          <div class="ba__frame">
-            <img class="ba__img" data-src="${esc(after.src)}" alt="${esc(after.alt)}" width="1280" height="720" decoding="async" />
-            <img class="ba__img ba__img--before" data-src="${esc(before.src)}" alt="${esc(before.alt)}" width="1280" height="720" decoding="async" />
-            <span class="ba__tag ba__tag--before" aria-hidden="true">Before</span>
-            <span class="ba__tag ba__tag--after" aria-hidden="true">After</span>
-            <span class="ba__handle" aria-hidden="true"></span>
-            <input class="ba__range" type="range" min="0" max="100" value="50" aria-label="${title}: compare before and after" aria-valuetext="50% before, 50% after" />
-          </div>
-          <figcaption class="ba__cap">Drag to compare before &amp; after</figcaption>
-        </figure>` : '';
+  const [before, after] = s.compare || [];
+  const slider = before && after ? baHTML(before, after, s.title, { lazy: true }) : '';
+  const peek = s.gallery[0] ? `<img class="svc__peek" src="${esc(s.gallery[0].thumb)}" alt="" width="640" height="360" loading="lazy" decoding="async" />` : '';
   return `
   <div class="svc" data-id="${s.id}" data-open="false">
     <h3 class="svc__heading">
@@ -45,6 +35,7 @@ function itemHTML(s) {
             ${s.tag ? `<span class="svc__tag">${esc(s.tag)}</span>` : ''}
           </span>
         </span>
+        ${peek}
         <span class="svc__toggle" aria-hidden="true"></span>
       </button>
     </h3>
@@ -55,6 +46,7 @@ function itemHTML(s) {
         <div class="thumbs">${thumbs}</div>
         <div class="svc__actions">
           <button class="cta cta--sm" type="button" data-quote="${s.id}">Get a quote<span class="vh"> for ${title}</span></button>
+          ${s.jobs ? `<a class="svc__jobs" href="#work" data-jobs-filter="${s.id}">See ${s.jobs > 1 ? `${s.jobs} jobs` : 'the job'}<span class="vh"> for ${title}</span> in Recent work</a>` : ''}
         </div>
       </div></div>
     </div>
@@ -131,21 +123,7 @@ export function initServices() {
     if (quote) goToQuote(quote.dataset.quote);
   });
 
-  // before/after sliders: nudge the handle once each time one comes into view…
-  if ('IntersectionObserver' in window) {
-    const seen = new IntersectionObserver((entries) => {
-      for (const en of entries) if (en.isIntersecting) en.target.classList.add('is-seen');
-    }, { threshold: 0.6 });
-    accordion.querySelectorAll('.ba__frame').forEach((f) => seen.observe(f));
-  }
-  // …and the range input drives --pos
-  accordion.addEventListener('input', (e) => {
-    const range = e.target.closest('.ba__range');
-    if (!range) return;
-    const v = Number(range.value);
-    range.parentElement.style.setProperty('--pos', `${v}%`);
-    range.setAttribute('aria-valuetext', `${v}% before, ${100 - v}% after`);
-  });
+  watchBA(accordion); // nudge each slider once when it scrolls into view (ba.js)
 
   // cursor-tracked spotlight on each service row
   accordion.addEventListener('pointermove', (e) => {

@@ -544,7 +544,7 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 .svc__heading{ margin:0; font:inherit; }
 .svc__head{
   width:100%;
-  display:grid; grid-template-columns:auto 1fr auto; align-items:center;
+  display:grid; grid-template-columns:auto 1fr auto auto; align-items:center;   /* number · title · photo · toggle */
   gap:clamp(12px,3vw,26px);
   padding:clamp(14px,2.4vw,22px) clamp(16px,3vw,26px);
   text-align:left; border:0; color:inherit; cursor:pointer;
@@ -566,6 +566,17 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 .svc__badge[hidden],.svc__tag[hidden]{ display:none; }
 
 .svc__toggle{ position:relative; width:26px; height:26px; flex:none; }
+.svc__peek{   /* the service's newest photo, so the closed list scans at a glance */
+  width:clamp(96px,11vw,150px); height:auto; aspect-ratio:16 / 9; object-fit:cover;
+  border-radius:var(--radius-sm); box-shadow:0 0 0 1px var(--hairline-metal), 0 8px 18px -10px rgba(0,0,0,.8);
+  opacity:.85; transition:opacity .25s, transform .25s var(--ease);
+}
+.svc__head:hover .svc__peek{ opacity:1; transform:translateY(-2px); }
+.svc[data-open="true"] .svc__peek{ opacity:0; transform:scale(.96); }   /* the open panel shows the photos */
+@media (max-width:640px){
+  .svc__head{ grid-template-columns:auto 1fr auto; }
+  .svc__peek{ display:none; }
+}
 .svc__toggle::before,.svc__toggle::after{
   content:""; position:absolute; top:50%; left:50%; width:18px; height:3px;
   background:var(--accent-2); border-radius:2px;
@@ -624,7 +635,9 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 }
 .svc__points li{ display:flex; align-items:flex-start; gap:10px; font-size:.95rem; }
 .svc__points svg{ width:18px; height:18px; flex:none; margin-top:3px; color:var(--accent-2); }
-.svc__actions{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+.svc__actions{ display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px; }
+.svc__jobs{ color:var(--muted); font-size:.92rem; text-decoration:underline; text-decoration-color:var(--accent-2); text-underline-offset:3px; }
+.svc__jobs:hover{ color:var(--text); }
 /* wide panels: words on the left, the before/after slider beside them, photos underneath */
 @container svc (min-width:820px){
   /* row 4 (1fr) soaks up the slider's extra height, so the text stays stacked at the top */
@@ -675,7 +688,7 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 .ba__tag--after{ right:10px; border-right:2px solid var(--accent-2); }
 .ba__cap{ margin-top:8px; font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
 /* a one-time nudge when the slider comes into view (services.js adds .is-seen), so the handle reads as draggable */
-.svc[data-open="true"] .ba__frame.is-seen{ animation:ba-hint 1.5s .3s var(--ease) 1; }   /* no fill-mode: a drag's value takes over after */
+.ba__frame.is-seen{ animation:ba-hint 1.5s .3s var(--ease) 1; }   /* no fill-mode: a drag's value takes over after */
 @keyframes ba-hint{ 0%,100%{ --pos:50%; } 35%{ --pos:36%; } 70%{ --pos:62%; } }
 
 /* project thumbnails (buttons → lightbox) */
@@ -724,6 +737,91 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 @media (hover:none){ .thumb__zoom,.photo__zoom{ opacity:1; } }
 
 /* =====================================================================
+   RECENT WORK — a card per job + the job viewer (projects.js)
+   ===================================================================== */
+.jobs{ margin-top:calc(var(--space)*6); }
+.jobs__title{
+  margin:8px 0 6px; font-family:var(--font-display); font-weight:400; text-transform:uppercase;
+  font-size:clamp(1.7rem,4vw,2.5rem); line-height:1; letter-spacing:-.005em;
+}
+.jobs__lead{ margin:0 0 16px; max-width:66ch; color:var(--muted); }
+.jobs__sample{ color:var(--accent-2); }
+.jobs__sample[hidden]{ display:none; }
+.jobs__filters{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.chip{
+  min-height:38px; padding:0 14px; border:0; border-radius:999px; cursor:pointer;
+  background:var(--surface); color:var(--muted); font:600 .88rem/1 var(--font-body);
+  box-shadow:inset 0 0 0 1px var(--hairline-metal); transition:color .2s, box-shadow .2s;
+}
+.chip:hover{ color:var(--text); box-shadow:inset 0 0 0 1px var(--accent); }
+.chip[aria-pressed="true"]{ color:#fff; background:linear-gradient(180deg, var(--cta-1), var(--cta-2)); box-shadow:none; }
+.jobs__grid{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap:clamp(12px,2vw,18px); }
+.job-card[hidden]{ display:none; }
+.job-card__btn{
+  display:grid; gap:6px; width:100%; height:100%; margin:0; padding:0 0 14px; align-content:start;
+  border:0; border-radius:var(--radius); overflow:hidden; cursor:pointer; text-align:left; color:inherit; font:inherit;
+  background:var(--surface); box-shadow:inset 0 0 0 1px var(--hairline-metal);
+  transition:transform .25s var(--ease), box-shadow .25s;
+}
+.job-card__btn:hover,.job-card__btn:focus-visible{ transform:translateY(-3px); box-shadow:inset 0 0 0 1px var(--accent), 0 16px 30px -18px rgba(0,0,0,.9); }
+.job-card__pic{ position:relative; display:block; margin-bottom:6px; }
+.job-card__pic img{ width:100%; height:auto; aspect-ratio:16 / 9; object-fit:cover; }
+.job-card__ba{
+  position:absolute; left:10px; top:10px; padding:3px 8px; border-radius:2px; border-left:2px solid var(--accent);
+  background:rgba(8,9,20,.8); font:600 10px/1.4 var(--font-mono); letter-spacing:.1em; text-transform:uppercase;
+}
+.job-card__tags{ padding:0 14px; font:600 11px/1.4 var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--accent-2); }
+.job-card__title{ padding:0 14px; font-family:var(--font-heavy); font-size:1.02rem; letter-spacing:.02em; text-transform:uppercase; }
+.job-card__meta{ padding:0 14px; color:var(--muted); font-size:.9rem; }
+.jobs__more{ margin-top:16px; }
+.jobs__more[hidden]{ display:none; }
+
+/* the job viewer: a native <dialog> (focus, Esc and the backdrop come built in) */
+.job{
+  width:min(980px, calc(100vw - 32px)); max-width:none; max-height:calc(100dvh - 32px); margin:auto; padding:0;
+  border:0; border-radius:var(--radius); overflow:auto; overscroll-behavior:contain;
+  background:var(--surface); color:var(--text);
+  box-shadow:0 0 0 1px var(--hairline-metal), 0 30px 80px rgba(0,0,0,.7);
+}
+.job::backdrop{ background:rgba(4,5,12,.74); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); }
+html:has(.job[open]){ overflow:hidden; }
+.job__body{ display:grid; gap:16px; padding:clamp(18px,3vw,30px); }
+.job__close{
+  position:sticky; top:0; z-index:3; justify-self:end; margin-bottom:-60px;
+  width:44px; height:44px; display:grid; place-items:center; border:0; border-radius:50%; cursor:pointer;
+  background:rgba(8,9,20,.82); color:var(--text); box-shadow:0 0 0 1px var(--hairline-metal);
+}
+.job__close svg{ width:18px; height:18px; }
+.job__head{ padding-right:56px; }
+.job__title{ margin:6px 0 4px; font-family:var(--font-display); font-weight:400; text-transform:uppercase; font-size:clamp(1.8rem,5vw,2.8rem); line-height:1; }
+.job__meta{ margin:0; color:var(--muted); }
+.job__sample{ margin-left:6px; padding:2px 8px; border-radius:999px; background:var(--accent); color:#fff; letter-spacing:.06em; }
+.job__summary{ margin:0; max-width:70ch; font-size:1.05rem; }
+.job__quote{ margin:0; padding:14px 18px; border-left:3px solid var(--accent); border-radius:var(--radius-sm); background:var(--surface-deep); }
+.job__quote p{ margin:0 0 6px; font-size:1.05rem; }
+.job__quote footer{ color:var(--muted); font-size:.9rem; }
+.job__photos-head{ display:flex; align-items:center; gap:10px; }
+.job__photos-head h3{ margin:0 auto 0 0; font-family:var(--font-heavy); font-weight:400; font-size:.95rem; letter-spacing:.06em; text-transform:uppercase; }
+.job__count{ font:500 12px/1 var(--font-mono); color:var(--muted); }
+.job__step{
+  width:40px; height:40px; display:grid; place-items:center; border:0; border-radius:50%; cursor:pointer;
+  background:var(--surface-2); color:var(--text); box-shadow:inset 0 0 0 1px var(--hairline-metal);
+}
+.job__step svg{ width:18px; height:18px; }
+.job__strip{
+  display:grid; grid-auto-flow:column; grid-auto-columns:100%; gap:12px;
+  overflow-x:auto; scroll-snap-type:x mandatory; overscroll-behavior-x:contain; scrollbar-width:thin;
+}
+.job__shot{ margin:0; scroll-snap-align:start; }
+.job__shot img{ width:100%; height:auto; aspect-ratio:16 / 9; object-fit:cover; border-radius:var(--radius-sm); background:var(--surface-deep); }
+.job__shot figcaption{ margin-top:6px; font:500 11px/1.4 var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+.job__actions{ display:flex; flex-wrap:wrap; gap:12px; }
+@media (max-width:640px){
+  .job{ width:100vw; height:100dvh; max-height:100dvh; border-radius:0; }
+  .job__actions .cta{ flex:1 1 100%; }
+}
+
+/* =====================================================================
    HOW IT WORKS — three steps under the services list
    ===================================================================== */
 .steps{ margin-top:calc(var(--space)*6); }
@@ -745,6 +843,27 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 .step__icon{ width:26px; height:26px; color:var(--accent-2); }
 .step h3{ margin:12px 0 6px; font-family:var(--font-heavy); font-weight:400; font-size:1rem; letter-spacing:.04em; text-transform:uppercase; }
 .step p{ margin:0; color:var(--muted); font-size:.95rem; }
+
+/* =====================================================================
+   THIS SEASON'S HOME CHECKLIST (seasons.js fills it)
+   ===================================================================== */
+.season-list{
+  margin-top:calc(var(--space)*6);
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.3fr); gap:clamp(18px,3vw,36px); align-items:start;
+  padding:clamp(20px,3.4vw,32px); border-radius:var(--radius); border-left:3px solid var(--accent-2);
+  background:var(--surface); box-shadow:inset 0 0 0 1px var(--hairline-metal);
+}
+@media (max-width:760px){ .season-list{ grid-template-columns:1fr; } }
+.season-list__title{ margin:8px 0 10px; font-family:var(--font-display); font-weight:400; text-transform:uppercase; font-size:clamp(1.6rem,3.6vw,2.2rem); line-height:1; }
+.season-list__cta{ margin:0; color:var(--muted); }
+.season-list__items{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+.season-list__items li{ display:flex; align-items:flex-start; gap:10px; }
+.season-list__items svg{ width:18px; height:18px; flex:none; margin-top:3px; color:var(--accent-2); }
+.linkish{
+  padding:0; border:0; background:none; cursor:pointer; font:inherit; font-weight:600; color:var(--text);
+  text-decoration:underline; text-decoration-color:var(--accent-2); text-underline-offset:3px;
+}
+.linkish:hover{ color:var(--accent-2); }
 
 /* =====================================================================
    THE WOODSHOP — handmade furniture, under the services list
@@ -829,6 +948,11 @@ html:not(.js) .panel + .panel{ margin-top:72px; }
 }
 .closer__title{ margin:0 0 6px; font-family:var(--font-display); font-weight:400; text-transform:uppercase; font-size:clamp(1.7rem,4vw,2.5rem); line-height:1; }
 .closer__copy p{ margin:0; color:var(--muted); }
+.closer__copy .closer__area{ display:flex; align-items:flex-start; gap:8px; margin-top:10px; font-size:.92rem; }
+.closer__area svg{ width:16px; height:16px; flex:none; margin-top:3px; color:var(--accent-2); }
+.closer__area strong{ color:var(--text); }
+.reviews__more{ margin:18px 0 0; }
+.reviews__more:has(> [hidden]){ display:none; }
 .closer__actions{ display:flex; flex-wrap:wrap; gap:12px; }
 @media (max-width:560px){ .closer__actions .cta{ flex:1 1 100%; } }
 
@@ -1207,7 +1331,8 @@ html[data-motion="off"] .season-fx{ display:none; }
   body{ background:#fff; color:#111; }
   body::before,body::after,.concrete,.season-fx,.hero__photo,.hero__light,.hero__ink,.hero__sun,.hero-ground,
   .topbar .season-switch,.tabbar,.head-stage,.head-hint,.season-chip,.cta,.lightbox,.thumb::before,.svc__toggle,
-  .motion-toggle,.footer__motion,.woodshop::before,.woodshop::after,.woodshop__gallery,.actionbar,.ba,.closer__actions{ display:none !important; }
+  .motion-toggle,.footer__motion,.woodshop::before,.woodshop::after,.woodshop__gallery,.actionbar,.ba,.closer__actions,
+  .svc__peek,.jobs__filters,.jobs__more,.job{ display:none !important; }
   .woodshop{ background:none; box-shadow:none; padding:0; }
   .hero__headline,.svc-title{ -webkit-text-fill-color:#111 !important; color:#111 !important; background:none !important; filter:none !important; }
   .svc-title::before{ display:none !important; }

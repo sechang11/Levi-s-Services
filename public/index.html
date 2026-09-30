@@ -455,6 +455,16 @@
         </ul>
       </noscript>
 
+      <!-- ===== RECENT WORK — projects.js renders the jobs listed in js/content.js ===== -->
+      <section class="jobs" id="work" aria-labelledby="h-jobs">
+        <p class="kicker"><svg aria-hidden="true"><use href="#i-hammer" /></svg>Recent work</p>
+        <h2 class="jobs__title" id="h-jobs">Jobs, start to finish</h2>
+        <p class="jobs__lead">Each job with its before &amp; after, the photos and the story behind it. <span class="jobs__sample" data-jobs-sample>These are placeholder jobs until Levi's real ones go in.</span></p>
+        <div class="jobs__filters" role="group" aria-label="Show jobs by service" data-jobs-filters></div>
+        <ul class="jobs__grid" data-jobs-grid></ul>
+        <button class="cta cta--ghost cta--sm jobs__more" type="button" data-jobs-more hidden>Show all jobs</button>
+      </section>
+
       <!-- ===== HOW IT WORKS ===== -->
       <section class="steps" aria-labelledby="h-steps">
         <p class="kicker">How it works</p>
@@ -479,6 +489,16 @@
             <p>Work starts on the date we agree. The site is cleaned up every day, and we walk the finished job together.</p>
           </li>
         </ol>
+      </section>
+
+      <!-- ===== THIS SEASON'S HOME CHECKLIST — seasons.js fills it from js/content.js ===== -->
+      <section class="season-list" aria-labelledby="h-season-list">
+        <div class="season-list__head">
+          <p class="kicker"><svg aria-hidden="true"><use data-season-icon href="#i-fall" /></svg><span data-season-label>Fall</span> · home checklist</p>
+          <h2 class="season-list__title" id="h-season-list">Stay ahead of the season</h2>
+          <p class="season-list__cta">Rather not do it yourself? <button class="linkish" type="button" data-quote-featured>Get a free quote</button></p>
+        </div>
+        <ul class="season-list__items" data-season-checklist></ul>
       </section>
 
       <!-- ===== THE WOODSHOP — swap the placeholder photos in assets/projects/woodshop-0N(.webp + -sm.webp) ===== -->
@@ -535,6 +555,7 @@
         <div class="closer__copy">
           <h2 class="closer__title" id="h-closer">Got a project in mind?</h2>
           <p>Text a photo of the job, call, or send the form. The quote is free.</p>
+          <p class="closer__area"><svg aria-hidden="true"><use href="#i-pin" /></svg><span>Serving <strong>[Your City]</strong> and about [30] miles around: [Town] · [Town] · [Town] · [Town]</span></p>
         </div>
         <div class="closer__actions">
           <button class="cta" type="button" data-goto-tab="contact">Get a free quote</button>
@@ -660,6 +681,8 @@
             </figure>
           </div>
         </section>
+
+        <p class="reviews__more"><a class="cta cta--ghost cta--sm" href="/review" data-review-link hidden>Leave Levi a review</a></p>
 
         <div class="story__cta">
           <button class="cta" type="button" data-goto-tab="contact">Start a project with Levi</button>
@@ -816,6 +839,11 @@
       </button>
     </div>
   </footer>
+
+  <!-- ===================== JOB VIEWER (projects.js) ===================== -->
+  <dialog class="job" id="jobDialog" aria-labelledby="jobTitle">
+    <div class="job__body" data-job-body></div>
+  </dialog>
 
   <!-- ===================== PHONE QUICK ACTIONS (actionbar.js) ===================== -->
   <nav class="actionbar" aria-label="Quick contact" hidden>

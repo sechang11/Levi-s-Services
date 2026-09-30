@@ -23,6 +23,9 @@ const PORT = Number(process.env.PORT) || 5173;
 const WEBHOOK_URL = (process.env.QUOTE_WEBHOOK_URL || '').trim();
 // Optional: the public URL (e.g. https://levibuilds.com). Otherwise derived per request.
 const SITE_URL = (process.env.SITE_URL || '').trim().replace(/\/+$/, '');
+// Optional: Levi's Google "write a review" link. /review then forwards there, a short
+// link to text clients after a job; the site's "Leave a review" button appears too.
+const REVIEW_URL = /^https:\/\/\S+$/i.test((process.env.REVIEW_URL || '').trim()) ? process.env.REVIEW_URL.trim() : '';
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -327,6 +330,15 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       return sendText(res, 405, 'Method Not Allowed', { Allow: 'GET, HEAD' });
+    }
+    if (pathname === '/review') {
+      if (!REVIEW_URL) { // not set up yet: people get the 404 page, the site's quiet HEAD check a 204 (button stays hidden)
+        if (req.method === 'GET') return await sendNotFound(req, res);
+        res.writeHead(204, { ...BASE_HEADERS, 'Cache-Control': 'no-store' });
+        return res.end();
+      }
+      res.writeHead(302, { ...BASE_HEADERS, Location: REVIEW_URL, 'Cache-Control': 'no-store', 'Content-Length': 0 });
+      return res.end();
     }
     const abs = resolvePath(pathname);
     const file = abs ? await getFile(abs) : null;

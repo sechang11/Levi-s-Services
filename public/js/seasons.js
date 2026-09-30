@@ -60,6 +60,10 @@ function paint(key) {
   setText('[data-season-cta]', s.cta);
   setText('[data-season-label]', s.label);
   document.querySelectorAll('[data-season-icon]').forEach((u) => u.setAttribute('href', `#i-${key}`));
+  const esc = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  document.querySelectorAll('[data-season-checklist]').forEach((ul) => {
+    ul.innerHTML = (s.checklist || []).map((t) => `<li><svg aria-hidden="true"><use href="#i-check"/></svg><span>${esc(t)}</span></li>`).join('');
+  });
   setBackdrop(key);
   featureService(s.featured, { open: true });
   setFxSeason(key);
